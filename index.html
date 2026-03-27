@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DMARK ADVISE</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
+<style>
+:root {
+  --purple:#8B2BE2; --purple-light:#A855F7; --purple-dark:#6D1AB0;
+  --black:#0A0A0F; --black-2:#12121A; --black-3:#1A1A25;
+  --red:#D62828; --red-light:#FF3B3B; --white:#F0EEFF; --gray:#888;
+  --gold:#C9A84C; --gold-light:#E8C97A;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'Montserrat',sans-serif;overflow-x:hidden;}
+
+/* OVERLAY */
+#overlay{position:fixed;inset:0;background:var(--black);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.8s ease;}
+#overlay.hide{opacity:0;pointer-events:none;}
+#animationWindow{width:220px;height:220px;filter:hue-rotate(260deg) saturate(1.8);}
+#overlay .brand-overlay{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;color:var(--purple-light);letter-spacing:6px;margin-top:16px;}
+#overlay .brand-overlay span{color:var(--white);font-size:.9rem;font-family:'Montserrat',sans-serif;letter-spacing:12px;display:block;margin-top:4px;}
+
+/* PAGE TRANSITION */
+#page-transition{position:fixed;inset:0;background:var(--black);z-index:8000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s ease;backdrop-filter:blur(8px);}
+#page-transition.active{opacity:1;pointer-events:all;}
+#page-transition-anim{width:100px;height:100px;filter:hue-rotate(260deg) saturate(2);}
+
+/* AUTH */
+.auth-page{position:fixed;inset:0;background:var(--black);z-index:7000;display:flex;align-items:center;justify-content:center;transition:opacity .5s ease;}
+.auth-page.hidden{opacity:0;pointer-events:none;}
+.auth-bg{position:absolute;inset:0;overflow:hidden;}
+.auth-bg::before{content:'';position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(138,43,226,.25) 0%,transparent 70%);top:-200px;left:-200px;border-radius:50%;}
+.auth-bg::after{content:'';position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(214,40,40,.15) 0%,transparent 70%);bottom:-100px;right:-100px;border-radius:50%;}
+.auth-card{position:relative;z-index:2;background:var(--black-2);border:1px solid rgba(138,43,226,.3);border-radius:20px;padding:48px 40px;width:380px;box-shadow:0 0 60px rgba(138,43,226,.2);}
+.auth-logo{text-align:center;margin-bottom:32px;}
+.auth-logo .dmark{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--purple-light);letter-spacing:4px;}
+.auth-logo .advise{font-size:.7rem;letter-spacing:10px;color:var(--white);opacity:.7;display:block;margin-top:2px;}
+.auth-tabs{display:flex;margin-bottom:28px;border-bottom:1px solid rgba(255,255,255,.1);}
+.auth-tab{flex:1;text-align:center;padding:10px;cursor:pointer;font-size:.85rem;font-weight:600;letter-spacing:2px;color:var(--gray);transition:all .3s;border-bottom:2px solid transparent;margin-bottom:-1px;}
+.auth-tab.active{color:var(--purple-light);border-bottom-color:var(--purple-light);}
+.auth-form{display:none;}
+.auth-form.active{display:block;}
+.form-group{position:relative;margin-bottom:18px;}
+.form-group input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(138,43,226,.3);border-radius:10px;padding:14px 16px 14px 44px;color:var(--white);font-size:.85rem;font-family:'Montserrat',sans-serif;outline:none;transition:border-color .3s;}
+.form-group input:focus{border-color:var(--purple-light);background:rgba(138,43,226,.08);}
+.form-group input::placeholder{color:rgba(255,255,255,.35);}
+.form-group .icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--purple-light);font-size:1rem;}
+.btn-auth{width:100%;padding:14px;background:linear-gradient(135deg,var(--purple),var(--purple-dark));border:none;border-radius:10px;color:#fff;font-size:.9rem;font-weight:700;letter-spacing:2px;cursor:pointer;margin-top:8px;transition:all .3s;position:relative;overflow:hidden;}
+.btn-auth::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--purple-light),var(--purple));opacity:0;transition:opacity .3s;}
+.btn-auth:hover::before{opacity:1;}
+.btn-auth span{position:relative;z-index:1;}
+.auth-footer{text-align:center;margin-top:16px;font-size:.75rem;color:var(--gray);}
+.auth-footer a{color:var(--purple-light);text-decoration:none;cursor:pointer;}
+
+/* MAIN */
+#main-site{display:none;}
+#main-site.visible{display:block;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:18px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,15,.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(138,43,226,.15);}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--purple-light);letter-spacing:3px;cursor:pointer;}
+.nav-logo span{color:var(--white);font-size:.6rem;letter-spacing:8px;display:block;font-family:'Montserrat',sans-serif;margin-top:-2px;}
+.nav-links{display:flex;gap:36px;list-style:none;}
+.nav-links a{color:rgba(240,238,255,.7);text-decoration:none;font-size:.8rem;font-weight:500;letter-spacing:2px;transition:color .3s;cursor:pointer;}
+.nav-links a:hover{color:var(--purple-light);}
+.nav-cta{background:linear-gradient(135deg,var(--purple),var(--purple-dark));border:none;padding:10px 24px;border-radius:30px;color:#fff;font-size:.78rem;font-weight:600;letter-spacing:1px;cursor:pointer;transition:transform .3s,box-shadow .3s;}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(138,43,226,.4);}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:120px 60px 80px;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(138,43,226,.18) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(214,40,40,.08) 0%,transparent 50%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(138,43,226,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(138,43,226,.04) 1px,transparent 1px);background-size:60px 60px;}
+.hero-orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(60px);animation:orbFloat 8s ease-in-out infinite;}
+.hero-orb-1{width:400px;height:400px;background:rgba(138,43,226,.15);top:10%;left:-10%;animation-delay:0s;}
+.hero-orb-2{width:300px;height:300px;background:rgba(214,40,40,.08);top:60%;right:-5%;animation-delay:3s;}
+.hero-orb-3{width:200px;height:200px;background:rgba(138,43,226,.1);bottom:20%;left:40%;animation-delay:6s;}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(30px,-20px) scale(1.05);}66%{transform:translate(-20px,30px) scale(.95);}}
+.hero-float-icon{position:absolute;font-size:1.5rem;opacity:.07;pointer-events:none;animation:floatIcon 12s ease-in-out infinite;}
+.hero-float-icon:nth-child(1){top:15%;left:8%;animation-delay:0s;font-size:2rem;}
+.hero-float-icon:nth-child(2){top:40%;right:10%;animation-delay:4s;}
+.hero-float-icon:nth-child(3){bottom:30%;left:15%;animation-delay:2s;font-size:1.2rem;}
+.hero-float-icon:nth-child(4){top:70%;right:20%;animation-delay:7s;font-size:1.8rem;}
+@keyframes floatIcon{0%,100%{transform:translateY(0) rotate(0deg);opacity:.07;}50%{transform:translateY(-20px) rotate(15deg);opacity:.14;}}
+.hero-content{position:relative;z-index:2;text-align:center;max-width:1000px;}
+.hero-tag{display:inline-block;background:rgba(138,43,226,.15);border:1px solid rgba(138,43,226,.4);padding:6px 20px;border-radius:30px;font-size:.72rem;letter-spacing:4px;color:var(--purple-light);margin-bottom:32px;animation:fadeSlideDown .8s ease both;}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(3rem,8vw,7rem);font-weight:900;line-height:1.05;margin-bottom:28px;animation:fadeSlideUp .9s ease .2s both;}
+.hero-title .line1{color:var(--white);display:block;}
+.hero-title .line2{display:block;background:linear-gradient(135deg,var(--purple-light),#e040fb,var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-title .line3{color:rgba(240,238,255,.45);display:block;font-size:.3em;letter-spacing:6px;font-weight:400;margin-top:16px;font-family:'Montserrat',sans-serif;}
+.hero-stats{display:flex;justify-content:center;gap:48px;margin-bottom:36px;animation:fadeSlideUp .9s ease .4s both;}
+.hero-stat{text-align:center;}
+.hero-stat-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--purple-light);display:block;}
+.hero-stat-label{font-size:.65rem;letter-spacing:3px;color:var(--gray);}
+.hero-stat-div{width:1px;background:rgba(138,43,226,.3);align-self:stretch;}
+.hero-quote{font-size:1rem;color:rgba(240,238,255,.55);line-height:1.9;max-width:560px;margin:0 auto 40px;font-style:italic;animation:fadeSlideUp .9s ease .5s both;}
+.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;animation:fadeSlideUp .9s ease .6s both;}
+.btn-primary{background:linear-gradient(135deg,var(--purple),var(--purple-dark));border:none;padding:16px 40px;border-radius:50px;color:#fff;font-size:.85rem;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all .3s;}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(138,43,226,.45);}
+.btn-outline{background:transparent;border:2px solid rgba(138,43,226,.5);padding:14px 36px;border-radius:50px;color:var(--white);font-size:.85rem;font-weight:600;letter-spacing:2px;cursor:pointer;transition:all .3s;}
+.btn-outline:hover{border-color:var(--purple-light);color:var(--purple-light);transform:translateY(-3px);}
+@keyframes fadeSlideDown{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+.scroll-indicator{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;animation:bounce 2s infinite;cursor:pointer;}
+.scroll-indicator span{font-size:.65rem;letter-spacing:3px;color:var(--gray);}
+.scroll-line{width:1px;height:50px;background:linear-gradient(to bottom,var(--purple-light),transparent);}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(8px);}}
+
+/* ALL SERVICES */
+#all-services-modal{position:fixed;inset:0;z-index:6000;background:rgba(10,10,15,.97);backdrop-filter:blur(16px);overflow-y:auto;opacity:0;pointer-events:none;transition:opacity .4s ease;}
+#all-services-modal.open{opacity:1;pointer-events:all;}
+.all-services-inner{padding:80px 40px 60px;max-width:1200px;margin:0 auto;}
+.all-services-header{text-align:center;margin-bottom:56px;}
+.all-services-close{position:fixed;top:24px;right:28px;background:rgba(138,43,226,.2);border:1px solid rgba(138,43,226,.4);color:var(--white);width:44px;height:44px;border-radius:50%;font-size:1.2rem;cursor:pointer;transition:all .3s;z-index:10;display:flex;align-items:center;justify-content:center;}
+.all-services-close:hover{background:rgba(138,43,226,.5);transform:rotate(90deg);}
+.all-services-header .section-label{font-size:.68rem;letter-spacing:6px;color:var(--purple-light);text-transform:uppercase;margin-bottom:12px;}
+.all-services-header h2{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3.2rem);font-weight:900;margin-bottom:12px;}
+.all-services-header p{color:rgba(240,238,255,.5);font-size:.9rem;}
+.all-services-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;}
+.as-card{background:var(--black-3);border:1px solid rgba(138,43,226,.2);border-radius:20px;padding:32px 28px;cursor:pointer;transition:all .4s;position:relative;overflow:hidden;}
+.as-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(138,43,226,.08),transparent);opacity:0;transition:opacity .4s;}
+.as-card:hover{transform:translateY(-8px);border-color:var(--purple-light);box-shadow:0 20px 50px rgba(138,43,226,.2);}
+.as-card:hover::before{opacity:1;}
+.as-card-icon{width:54px;height:54px;background:linear-gradient(135deg,var(--purple),var(--purple-dark));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:18px;}
+.as-card-name{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;margin-bottom:8px;}
+.as-card-price{font-size:1.2rem;font-weight:800;color:var(--purple-light);margin-bottom:8px;}
+.as-card-price span{font-size:.72rem;color:var(--gray);font-weight:400;}
+.as-card-desc{font-size:.8rem;color:rgba(240,238,255,.5);line-height:1.7;margin-bottom:20px;}
+.as-card-btn{background:linear-gradient(135deg,var(--purple),var(--purple-dark));border:none;padding:10px 22px;border-radius:30px;color:#fff;font-size:.78rem;font-weight:600;letter-spacing:1px;cursor:pointer;}
+
+/* SECTIONS */
+section{padding:100px 60px;}
+.section-label{font-size:.68rem;letter-spacing:6px;color:var(--purple-light);text-transform:uppercase;margin-bottom:12px;}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3.5rem);font-weight:900;margin-bottom:16px;}
+.section-subtitle{color:rgba(240,238,255,.55);font-size:.95rem;line-height:1.7;max-width:500px;}
+
+/* SERVICES */
+#services{background:var(--black-2);}
+.services-header{text-align:center;margin-bottom:64px;}
+.services-header .section-subtitle{margin:0 auto;}
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;max-width:1100px;margin:0 auto;}
+.service-card{background:var(--black-3);border:1px solid rgba(138,43,226,.2);border-radius:20px;padding:40px 32px;cursor:pointer;transition:all .4s;position:relative;overflow:hidden;}
+.service-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(138,43,226,.08),transparent);opacity:0;transition:opacity .4s;}
+.service-card:hover{transform:translateY(-8px);border-color:var(--purple-light);box-shadow:0 20px 50px rgba(138,43,226,.2);}
+.service-card:hover::before{opacity:1;}
+.service-icon{width:56px;height:56px;background:linear-gradient(135deg,var(--purple),var(--purple-dark));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:20px;}
+.service-name{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin-bottom:10px;color:var(--white);}
+.service-price{font-size:1.4rem;font-weight:800;color:var(--purple-light);margin-bottom:8px;}
+.service-price span{font-size:.75rem;color:var(--gray);font-weight:400;}
+.service-desc{font-size:.82rem;color:rgba(240,238,255,.5);line-height:1.7;margin-bottom:24px;}
+.service-btn{background:linear-gradient(135deg,var(--purple),var(--purple-dark));border:none;padding:11px 24px;border-radius:30px;color:#fff;font-size:.78rem;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all .3s;}
+.service-btn:hover{box-shadow:0 6px 20px rgba(138,43,226,.4);transform:translateY(-1px);}
+
+/* REELS */
+#reels{background:var(--black);}
+.reels-layout{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;max-width:1100px;margin:0 auto;}
+#reels-anim{width:100%;height:320px;filter:hue-rotate(260deg) saturate(2);}
+.reels-packages{display:flex;flex-direction:column;gap:20px;}
+.reel-pkg{background:var(--black-2);border:1px solid rgba(138,43,226,.2);border-radius:16px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;transition:all .3s;cursor:pointer;}
+.reel-pkg:hover{border-color:var(--purple-light);transform:translateX(6px);}
+.reel-pkg-info h3{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:4px;}
+.reel-pkg-info p{font-size:.8rem;color:var(--gray);}
+.reel-pkg-price{text-align:right;}
+.reel-pkg-price .amount{font-size:1.5rem;font-weight:800;color:var(--purple-light);}
+.reel-pkg-price .per{font-size:.72rem;color:var(--gray);display:block;}
+
+/* ============================
+   PREMIUM GALLERY
+   ============================ */
+#gallery{background:var(--black-2);padding:100px 0 120px;overflow:hidden;}
+.gallery-header{text-align:center;margin-bottom:72px;padding:0 60px;}
+
+/* Scene */
+.gallery-stage{
+  position:relative;
+  width:100%;
+  height:560px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  perspective:1800px;
+  perspective-origin:50% 40%;
+  cursor:grab;
+  user-select:none;
+}
+.gallery-stage:active{cursor:grabbing;}
+
+.gallery-ring{
+  width:340px;
+  height:480px;
+  position:relative;
+  transform-style:preserve-3d;
+  animation:galleryRotate 22s linear infinite;
+  will-change:transform;
+}
+
+@keyframes galleryRotate{
+  from{transform:rotateY(0deg);}
+  to{transform:rotateY(360deg);}
+}
+
+/* Each gallery card */
+.g-card{
+  position:absolute;
+  width:340px;
+  height:480px;
+  border-radius:24px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.08);
+  backface-visibility:hidden;
+  transform-style:preserve-3d;
+  box-shadow:0 40px 80px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.1);
+}
+
+/* Front-card glow — only when facing camera (approx) */
+.g-card::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to bottom,rgba(255,255,255,.06) 0%,transparent 40%,rgba(0,0,0,.5) 100%);
+  pointer-events:none;
+}
+
+.g-card-art{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.g-card-info{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  padding:32px 28px;
+  background:linear-gradient(to top,rgba(10,10,15,.95) 0%,rgba(10,10,15,.6) 60%,transparent 100%);
+}
+.g-card-info h3{
+  font-family:'Playfair Display',serif;
+  font-size:1.6rem;font-weight:900;
+  color:var(--white);margin-bottom:6px;
+  text-shadow:0 2px 20px rgba(0,0,0,.8);
+}
+.g-card-info p{
+  font-size:.68rem;letter-spacing:4px;
+  color:var(--gold-light);opacity:.9;
+  text-transform:uppercase;
+}
+.g-card-count{
+  position:absolute;
+  top:24px;right:24px;
+  font-family:'Playfair Display',serif;
+  font-size:2.8rem;font-weight:900;
+  color:rgba(255,255,255,.07);
+  line-height:1;
+}
+
+/* position cards on ring */
+.g-card:nth-child(1){transform:rotateY(0deg) translateZ(500px);}
+.g-card:nth-child(2){transform:rotateY(60deg) translateZ(500px);}
+.g-card:nth-child(3){transform:rotateY(120deg) translateZ(500px);}
+.g-card:nth-child(4){transform:rotateY(180deg) translateZ(500px);}
+.g-card:nth-child(5){transform:rotateY(240deg) translateZ(500px);}
+.g-card:nth-child(6){transform:rotateY(300deg) translateZ(500px);}
+
+/* individual card backgrounds */
+.g-card:nth-child(1){background:linear-gradient(160deg,#1a0533 0%,#3d0d6e 40%,#1a0533 100%);}
+.g-card:nth-child(2){background:linear-gradient(160deg,#0a1525 0%,#0d2d50 40%,#0a1525 100%);}
+.g-card:nth-child(3){background:linear-gradient(160deg,#250a0a 0%,#5c1010 40%,#250a0a 100%);}
+.g-card:nth-child(4){background:linear-gradient(160deg,#050f08 0%,#0d3318 40%,#050f08 100%);}
+.g-card:nth-child(5){background:linear-gradient(160deg,#1a1505 0%,#3d3008 40%,#1a1505 100%);}
+.g-card:nth-child(6){background:linear-gradient(160deg,#08050f 0%,#180a30 40%,#08050f 100%);}
+
+/* ambient glow ring under carousel */
+.gallery-glow{
+  position:absolute;
+  bottom:-60px;left:50%;
+  transform:translateX(-50%);
+  width:600px;height:200px;
+  background:radial-gradient(ellipse,rgba(138,43,226,.25) 0%,transparent 70%);
+  pointer-events:none;
+  filter:blur(20px);
+}
+
+/* drag hint */
+.gallery-hint{
+  text-align:center;
+  margin-top:40px;
+  font-size:.7rem;
+  letter-spacing:4px;
+  color:rgba(240,238,255,.25);
+  text-transform:uppercase;
+  animation:hintPulse 3s ease-in-out infinite;
+}
+.gallery-hint span{margin:0 12px;opacity:.6;}
+@keyframes hintPulse{0%,100%{opacity:.25;}50%{opacity:.5;}}
+
+/* dots indicator */
+.gallery-dots{
+  display:flex;justify-content:center;gap:8px;
+  margin-top:24px;
+}
+.g-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:rgba(138,43,226,.3);
+  transition:all .4s;
+}
+.g-dot.active{
+  background:var(--purple-light);
+  width:24px;border-radius:3px;
+}
+
+/* ABOUT */
+#about{background:var(--black);}
+.about-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1100px;margin:0 auto;}
+#about-anim{width:100%;height:300px;filter:hue-rotate(260deg) saturate(2);}
+.about-text p{font-size:.9rem;color:rgba(240,238,255,.65);line-height:1.9;margin-bottom:20px;}
+.about-stats{display:flex;gap:32px;margin-top:32px;}
+.stat h3{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--purple-light);font-weight:900;}
+.stat p{font-size:.72rem;color:var(--gray);letter-spacing:2px;}
+
+/* CONTACT */
+#contact{background:var(--black-2);}
+.contact-layout{display:grid;grid-template-columns:1fr 1fr;gap:60px;max-width:1100px;margin:0 auto;}
+.contact-form{background:var(--black-3);border:1px solid rgba(138,43,226,.2);border-radius:20px;padding:40px;}
+.contact-form h3{font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:28px;}
+.contact-form input,.contact-form textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(138,43,226,.25);border-radius:10px;padding:14px 16px;color:var(--white);font-size:.85rem;font-family:'Montserrat',sans-serif;outline:none;margin-bottom:16px;transition:border-color .3s;}
+.contact-form input:focus,.contact-form textarea:focus{border-color:var(--purple-light);}
+.contact-form input::placeholder,.contact-form textarea::placeholder{color:rgba(255,255,255,.3);}
+.contact-form textarea{height:120px;resize:none;}
+.contact-info{display:flex;flex-direction:column;gap:28px;}
+.contact-item{display:flex;gap:16px;align-items:flex-start;}
+.contact-icon{width:46px;height:46px;background:rgba(138,43,226,.15);border:1px solid rgba(138,43,226,.3);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.contact-item h4{font-size:.75rem;letter-spacing:2px;color:var(--purple-light);margin-bottom:4px;}
+.contact-item p{font-size:.85rem;color:rgba(240,238,255,.65);}
+
+/* FOOTER */
+footer{background:var(--black);border-top:1px solid rgba(138,43,226,.15);padding:40px 60px;display:flex;align-items:center;justify-content:space-between;}
+.footer-logo{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:var(--purple-light);}
+.footer-logo span{display:block;font-size:.6rem;letter-spacing:8px;color:var(--gray);font-family:'Montserrat',sans-serif;}
+footer p{font-size:.75rem;color:var(--gray);}
+
+/* ==========================
+   BOOKING MODAL
+   ========================== */
+.modal-backdrop{position:fixed;inset:0;background:rgba(10,10,15,.92);z-index:9000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s;backdrop-filter:blur(8px);}
+.modal-backdrop.open{opacity:1;pointer-events:all;}
+.modal{background:var(--black-2);border:1px solid rgba(138,43,226,.35);border-radius:24px;padding:48px 44px;width:540px;max-width:95vw;max-height:90vh;overflow-y:auto;position:relative;transform:translateY(30px);transition:transform .4s;}
+.modal-backdrop.open .modal{transform:translateY(0);}
+.modal-close{position:absolute;top:20px;right:20px;background:rgba(138,43,226,.15);border:none;color:var(--white);width:34px;height:34px;border-radius:50%;font-size:1.1rem;cursor:pointer;transition:background .3s;}
+.modal-close:hover{background:rgba(138,43,226,.4);}
+.modal h2{font-family:'Playfair Display',serif;font-size:1.8rem;margin-bottom:6px;}
+.modal .modal-price{font-size:1.3rem;font-weight:800;color:var(--purple-light);margin-bottom:24px;}
+.modal label{display:block;font-size:.75rem;letter-spacing:2px;color:var(--purple-light);margin-bottom:6px;margin-top:16px;}
+.modal select,.modal input[type="number"],.modal input[type="date"],.modal input[type="time"],.modal input[type="text"],.modal textarea{
+  width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(138,43,226,.3);border-radius:10px;padding:12px 14px;color:var(--white);font-size:.85rem;font-family:'Montserrat',sans-serif;outline:none;transition:border-color .3s;
+}
+.modal select:focus,.modal input:focus,.modal textarea:focus{border-color:var(--purple-light);}
+.modal select option{background:var(--black-2);}
+.modal textarea{resize:none;height:80px;}
+.radio-group{display:flex;gap:12px;margin-top:4px;flex-wrap:wrap;}
+.radio-btn{flex:1;min-width:80px;padding:10px;border:1px solid rgba(138,43,226,.3);border-radius:10px;text-align:center;font-size:.8rem;cursor:pointer;transition:all .3s;}
+.radio-btn.selected{background:rgba(138,43,226,.2);border-color:var(--purple-light);color:var(--purple-light);}
+.wedding-options{display:flex;flex-direction:column;gap:12px;margin-top:4px;}
+.wedding-opt{background:var(--black-3);border:1px solid rgba(138,43,226,.2);border-radius:12px;padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:all .3s;}
+.wedding-opt:hover,.wedding-opt.selected{border-color:var(--purple-light);background:rgba(138,43,226,.1);}
+.wedding-opt h4{font-size:.9rem;font-weight:600;}
+.wedding-opt p{font-size:.75rem;color:var(--gray);}
+.wedding-opt .w-price{font-size:1.1rem;font-weight:800;color:var(--purple-light);}
+.total-price{margin-top:20px;padding:16px 20px;background:rgba(138,43,226,.1);border:1px solid rgba(138,43,226,.3);border-radius:12px;display:flex;justify-content:space-between;align-items:center;}
+.total-price span{font-size:.8rem;color:var(--gray);letter-spacing:2px;}
+.total-price strong{font-size:1.4rem;color:var(--purple-light);}
+.btn-book{width:100%;margin-top:20px;padding:16px;background:linear-gradient(135deg,var(--purple),var(--purple-dark));border:none;border-radius:12px;color:#fff;font-size:.9rem;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all .3s;}
+.btn-book:hover{box-shadow:0 10px 30px rgba(138,43,226,.4);transform:translateY(-2px);}
+
+/* ==========================
+   THANK YOU POPUP
+   ========================== */
+#thankyou-popup{
+  position:fixed;inset:0;z-index:99999;
+  background:rgba(10,10,15,.85);backdrop-filter:blur(12px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .4s ease;
+}
+#thankyou-popup.show{opacity:1;pointer-events:all;}
+.ty-card{
+  background:var(--black-2);
+  border:1px solid rgba(138,43,226,.4);
+  border-radius:28px;
+  padding:56px 52px;
+  text-align:center;
+  max-width:460px;
+  width:90vw;
+  box-shadow:0 0 80px rgba(138,43,226,.3),0 40px 80px rgba(0,0,0,.6);
+  transform:scale(.85) translateY(20px);
+  transition:transform .5s cubic-bezier(.34,1.56,.64,1);
+}
+#thankyou-popup.show .ty-card{transform:scale(1) translateY(0);}
+.ty-checkring{
+  width:80px;height:80px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),var(--purple-dark));
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 24px;
+  font-size:2.2rem;
+  box-shadow:0 0 40px rgba(138,43,226,.5);
+  animation:checkPop .6s cubic-bezier(.34,1.56,.64,1) .2s both;
+}
+@keyframes checkPop{from{transform:scale(0);}to{transform:scale(1);}}
+.ty-card h2{
+  font-family:'Playfair Display',serif;
+  font-size:1.9rem;font-weight:900;
+  color:var(--white);margin-bottom:10px;
+}
+.ty-card .ty-service{
+  display:inline-block;
+  background:rgba(138,43,226,.2);
+  border:1px solid rgba(138,43,226,.4);
+  padding:4px 16px;border-radius:20px;
+  font-size:.72rem;letter-spacing:3px;
+  color:var(--purple-light);margin-bottom:20px;
+}
+.ty-card p{
+  font-size:.9rem;color:rgba(240,238,255,.65);
+  line-height:1.8;margin-bottom:28px;
+}
+.ty-card p strong{color:var(--white);}
+.ty-divider{width:60px;height:1px;background:rgba(138,43,226,.3);margin:20px auto;}
+.ty-contact{font-size:.78rem;color:var(--gray);margin-bottom:28px;}
+.ty-contact span{color:var(--purple-light);font-weight:600;}
+.ty-close{
+  background:linear-gradient(135deg,var(--purple),var(--purple-dark));
+  border:none;padding:14px 40px;border-radius:30px;
+  color:#fff;font-size:.85rem;font-weight:700;letter-spacing:2px;
+  cursor:pointer;transition:all .3s;
+}
+.ty-close:hover{box-shadow:0 8px 24px rgba(138,43,226,.5);transform:translateY(-2px);}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:14px 20px;}
+  .nav-links{display:none;}
+  section{padding:70px 20px;}
+  #hero{padding:90px 20px 60px;}
+  .hero-title{font-size:2.6rem;}
+  .hero-stats{gap:20px;}
+  .hero-stat-num{font-size:1.5rem;}
+  .services-grid{grid-template-columns:1fr;}
+  .reels-layout{grid-template-columns:1fr;gap:40px;}
+  .gallery-stage{height:400px;perspective:900px;}
+  .gallery-ring{width:240px;height:340px;}
+  .g-card{width:240px;height:340px;}
+  .g-card:nth-child(1){transform:rotateY(0deg) translateZ(340px);}
+  .g-card:nth-child(2){transform:rotateY(60deg) translateZ(340px);}
+  .g-card:nth-child(3){transform:rotateY(120deg) translateZ(340px);}
+  .g-card:nth-child(4){transform:rotateY(180deg) translateZ(340px);}
+  .g-card:nth-child(5){transform:rotateY(240deg) translateZ(340px);}
+  .g-card:nth-child(6){transform:rotateY(300deg) translateZ(340px);}
+  .g-card-info h3{font-size:1.2rem;}
+  .about-layout{grid-template-columns:1fr;gap:40px;}
+  .contact-layout{grid-template-columns:1fr;gap:40px;}
+  footer{flex-direction:column;gap:16px;text-align:center;padding:30px 20px;}
+  .all-services-grid{grid-template-columns:1fr;}
+  .all-services-inner{padding:80px 20px 60px;}
+  .auth-card{width:94vw;padding:36px 24px;}
+  .modal{padding:36px 20px;}
+  .ty-card{padding:40px 28px;}
+  .gallery-header{padding:0 20px;}
+}
+@media(max-width:600px){
+  .hero-title{font-size:2rem;}
+  .hero-stats{flex-wrap:wrap;gap:16px;}
+  .hero-stat-div{display:none;}
+  .hero-btns{flex-direction:column;align-items:center;}
+  .hero-btns button{width:100%;max-width:280px;}
+}
+</style>
+</head>
+<body>
+
+<div id="overlay">
+  <div id="animationWindow"></div>
+  <div class="brand-overlay">DMARK<span>ADVISE</span></div>
+</div>
+
+<div id="page-transition">
+  <div id="page-transition-anim"></div>
+</div>
+
+<!-- ===== AUTH ===== -->
+<div class="auth-page" id="auth-page">
+  <div class="auth-bg"></div>
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="dmark">DMARK</div>
+      <span class="advise">ADVISE</span>
+    </div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchTab('login')">LOGIN</div>
+      <div class="auth-tab" onclick="switchTab('register')">REGISTER</div>
+    </div>
+    <div class="auth-form active" id="login-form">
+      <div class="form-group"><span class="icon">✉</span><input type="text" placeholder="Username or Email"></div>
+      <div class="form-group"><span class="icon">🔒</span><input type="password" placeholder="Password"></div>
+      <button class="btn-auth" onclick="enterSite()"><span>LOGIN →</span></button>
+      <div class="auth-footer"><a href="#">Forgot your password?</a></div>
+    </div>
+    <div class="auth-form" id="register-form">
+      <div class="form-group"><span class="icon">👤</span><input type="text" placeholder="Full Name"></div>
+      <div class="form-group"><span class="icon">✉</span><input type="email" placeholder="Email Address"></div>
+      <div class="form-group"><span class="icon">📱</span><input type="text" placeholder="Phone Number"></div>
+      <div class="form-group"><span class="icon">🔒</span><input type="password" placeholder="Password"></div>
+      <button class="btn-auth" onclick="enterSite()"><span>CREATE ACCOUNT →</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAIN SITE ===== -->
+<div id="main-site">
+
+<nav>
+  <div class="nav-logo">DMARK<span>ADVISE</span></div>
+  <ul class="nav-links">
+    <li><a onclick="goTo('services')">SERVICES</a></li>
+    <li><a onclick="goTo('reels')">REELS</a></li>
+    <li><a onclick="goTo('gallery')">GALLERY</a></li>
+    <li><a onclick="goTo('about')">ABOUT</a></li>
+    <li><a onclick="goTo('contact')">CONTACT</a></li>
+  </ul>
+  <button class="nav-cta" onclick="openAllServices()">BOOK NOW</button>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div><div class="hero-grid"></div>
+  <div class="hero-orb hero-orb-1"></div><div class="hero-orb hero-orb-2"></div><div class="hero-orb hero-orb-3"></div>
+  <div class="hero-float-icon">📷</div><div class="hero-float-icon">🎬</div><div class="hero-float-icon">✨</div><div class="hero-float-icon">💍</div>
+  <div class="hero-content">
+    <div class="hero-tag">✦ PREMIUM PHOTOGRAPHY &amp; VIDEOGRAPHY</div>
+    <h1 class="hero-title">
+      <span class="line1">CAPTURING YOUR</span>
+      <span class="line2">FINEST MOMENTS</span>
+      <span class="line3">WEDDINGS · BIRTHDAYS · FUNCTIONS · EVENTS · REELS</span>
+    </h1>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="hero-stat-num">500+</span><span class="hero-stat-label">EVENTS SHOT</span></div>
+      <div class="hero-stat-div"></div>
+      <div class="hero-stat"><span class="hero-stat-num">200+</span><span class="hero-stat-label">WEDDINGS</span></div>
+      <div class="hero-stat-div"></div>
+      <div class="hero-stat"><span class="hero-stat-num">6K</span><span class="hero-stat-label">QUALITY</span></div>
+      <div class="hero-stat-div"></div>
+      <div class="hero-stat"><span class="hero-stat-num">7</span><span class="hero-stat-label">SERVICES</span></div>
+    </div>
+    <p class="hero-quote">Every frame tells a story. We don't just shoot — we immortalize the moments that make life extraordinary.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="goTo('services')">EXPLORE SERVICES</button>
+      <button class="btn-outline" onclick="openAllServices()">📅 BOOK A SHOOT</button>
+    </div>
+  </div>
+  <div class="scroll-indicator" onclick="goTo('services')"><span>SCROLL</span><div class="scroll-line"></div></div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="services-header reveal">
+    <div class="section-label">WHAT WE OFFER</div>
+    <h2 class="section-title">Our <em>Specialisations</em></h2>
+    <p class="section-subtitle">Tailored packages crafted for every celebration, every milestone, every story worth telling.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal" onclick="openModal('birthday')">
+      <div class="service-icon">🎂</div>
+      <div class="service-name">Birthday Shoots</div>
+      <div class="service-price">₹20,000 <span>/ day</span></div>
+      <div class="service-desc">Capture the joy of every birthday — from intimate gatherings to grand celebrations. Indoor &amp; outdoor options.</div>
+      <button class="service-btn">SELECT DATE &amp; BOOK</button>
+    </div>
+    <div class="service-card reveal" onclick="openModal('wedding')">
+      <div class="service-icon">💍</div>
+      <div class="service-name">Wedding Shoots</div>
+      <div class="service-price">From ₹40,000</div>
+      <div class="service-desc">Bride, Groom, or Complete package. Full coverage from prep to reception.</div>
+      <button class="service-btn">CHOOSE PACKAGE</button>
+    </div>
+    <div class="service-card reveal" onclick="openModal('schoolfest')">
+      <div class="service-icon">🎓</div>
+      <div class="service-name">School Fests</div>
+      <div class="service-price">₹70,000 <span>/ day</span></div>
+      <div class="service-desc">Annual days, cultural fests, sports events — every proud moment captured.</div>
+      <button class="service-btn">BOOK YOUR FEST</button>
+    </div>
+  </div>
+</section>
+
+<!-- REELS -->
+<section id="reels">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="reveal" style="margin-bottom:56px;">
+      <div class="section-label">CONTENT CREATION</div>
+      <h2 class="section-title">Reels, Videos <em>&amp; Events</em></h2>
+    </div>
+    <div class="reels-layout">
+      <div class="reveal"><div id="reels-anim"></div></div>
+      <div class="reels-packages">
+        <div class="reel-pkg reveal" onclick="openModal('function')">
+          <div class="reel-pkg-info"><h3>Functions &amp; Events</h3><p>Corporate events, parties, ceremonies</p></div>
+          <div class="reel-pkg-price"><div class="amount">₹50K</div><span class="per">per day</span></div>
+        </div>
+        <div class="reel-pkg reveal" onclick="openModal('reels')">
+          <div class="reel-pkg-info"><h3>Reel Shoots</h3><p>6 polished videos, trending formats</p></div>
+          <div class="reel-pkg-price"><div class="amount">₹10,000</div><span class="per">6 reels</span></div>
+        </div>
+        <div class="reel-pkg reveal" onclick="openModal('youtube')">
+          <div class="reel-pkg-info"><h3>YouTube Videos</h3><p>1 video per minute of content</p></div>
+          <div class="reel-pkg-price"><div class="amount">₹4,000</div><span class="per">per minute</span></div>
+        </div>
+        <div class="reel-pkg reveal" onclick="openModal('reels6k')">
+          <div class="reel-pkg-info"><h3>Premium Reel Pack</h3><p>6 videos in cinematic 6K quality</p></div>
+          <div class="reel-pkg-price"><div class="amount">₹6,000</div><span class="per">6 videos</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PREMIUM GALLERY ===== -->
+<section id="gallery">
+  <div class="gallery-header reveal">
+    <div class="section-label">OUR WORK</div>
+    <h2 class="section-title">The <em>Gallery</em></h2>
+    <p class="section-subtitle" style="margin:0 auto;text-align:center;">A glimpse into stories captured through our lens.</p>
+  </div>
+
+  <div class="gallery-stage reveal" id="galleryStage">
+    <div class="gallery-glow"></div>
+    <div class="gallery-ring" id="galleryRing">
+
+      <!-- Card 1: Weddings -->
+      <div class="g-card">
+        <div class="g-card-art">
+          <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="80" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+            <circle cx="100" cy="100" r="60" stroke="rgba(201,168,76,0.15)" stroke-width="1"/>
+            <path d="M100 40 L108 70 L140 70 L115 88 L124 118 L100 100 L76 118 L85 88 L60 70 L92 70 Z" fill="rgba(201,168,76,0.18)" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+            <circle cx="100" cy="100" r="12" fill="rgba(201,168,76,0.3)" stroke="rgba(201,168,76,0.6)" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="g-card-count">01</div>
+        <div class="g-card-info"><h3>Weddings</h3><p>Forever Moments</p></div>
+      </div>
+
+      <!-- Card 2: Birthdays -->
+      <div class="g-card">
+        <div class="g-card-art">
+          <svg width="200" height="220" viewBox="0 0 200 220" fill="none">
+            <rect x="40" y="120" width="120" height="80" rx="8" fill="rgba(168,85,247,0.15)" stroke="rgba(168,85,247,0.35)" stroke-width="1.5"/>
+            <rect x="60" y="100" width="80" height="30" rx="4" fill="rgba(168,85,247,0.12)" stroke="rgba(168,85,247,0.3)" stroke-width="1"/>
+            <line x1="70" y1="100" x2="70" y2="70" stroke="rgba(168,85,247,0.5)" stroke-width="1.5"/>
+            <line x1="100" y1="100" x2="100" y2="60" stroke="rgba(168,85,247,0.5)" stroke-width="1.5"/>
+            <line x1="130" y1="100" x2="130" y2="70" stroke="rgba(168,85,247,0.5)" stroke-width="1.5"/>
+            <circle cx="70" cy="65" r="6" fill="rgba(255,170,0,0.7)"/>
+            <circle cx="100" cy="55" r="6" fill="rgba(255,80,80,0.7)"/>
+            <circle cx="130" cy="65" r="6" fill="rgba(100,200,255,0.7)"/>
+            <circle cx="100" cy="160" r="25" fill="rgba(168,85,247,0.12)" stroke="rgba(168,85,247,0.3)" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="g-card-count">02</div>
+        <div class="g-card-info"><h3>Birthdays</h3><p>Celebrate Big</p></div>
+      </div>
+
+      <!-- Card 3: Events -->
+      <div class="g-card">
+        <div class="g-card-art">
+          <svg width="200" height="200" viewBox="0 0 200 200" fill="none">
+            <circle cx="100" cy="100" r="70" stroke="rgba(255,80,80,0.15)" stroke-width="40"/>
+            <circle cx="100" cy="100" r="40" fill="rgba(255,80,80,0.1)" stroke="rgba(255,80,80,0.3)" stroke-width="1.5"/>
+            <path d="M85 80 L130 100 L85 120 Z" fill="rgba(255,80,80,0.5)"/>
+            <circle cx="60" cy="50" r="3" fill="rgba(255,200,0,0.8)"/>
+            <circle cx="140" cy="55" r="2" fill="rgba(100,255,200,0.8)"/>
+            <circle cx="155" cy="130" r="3" fill="rgba(255,80,80,0.8)"/>
+            <circle cx="45" cy="140" r="2" fill="rgba(168,85,247,0.8)"/>
+            <circle cx="80" cy="30" r="2" fill="rgba(255,140,0,0.8)"/>
+          </svg>
+        </div>
+        <div class="g-card-count">03</div>
+        <div class="g-card-info"><h3>Events</h3><p>Live The Moment</p></div>
+      </div>
+
+      <!-- Card 4: School Fests -->
+      <div class="g-card">
+        <div class="g-card-art">
+          <svg width="200" height="200" viewBox="0 0 200 200" fill="none">
+            <path d="M100 50 L160 80 L100 110 L40 80 Z" fill="rgba(0,200,100,0.15)" stroke="rgba(0,200,100,0.4)" stroke-width="1.5"/>
+            <path d="M60 90 L60 140 M140 90 L140 140" stroke="rgba(0,200,100,0.3)" stroke-width="1.5"/>
+            <path d="M60 140 Q100 120 140 140" stroke="rgba(0,200,100,0.4)" stroke-width="1.5" fill="none"/>
+            <rect x="130" y="80" width="10" height="50" fill="rgba(0,200,100,0.2)" stroke="rgba(0,200,100,0.4)" stroke-width="1"/>
+            <rect x="78" y="115" width="44" height="30" rx="4" fill="rgba(0,200,100,0.1)" stroke="rgba(0,200,100,0.3)" stroke-width="1"/>
+            <circle cx="100" cy="170" r="8" fill="rgba(0,200,100,0.2)" stroke="rgba(0,200,100,0.4)" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="g-card-count">04</div>
+        <div class="g-card-info"><h3>School Fests</h3><p>Proud Memories</p></div>
+      </div>
+
+      <!-- Card 5: Reels -->
+      <div class="g-card">
+        <div class="g-card-art">
+          <svg width="200" height="200" viewBox="0 0 200 200" fill="none">
+            <rect x="30" y="50" width="140" height="100" rx="10" stroke="rgba(232,201,122,0.3)" stroke-width="1.5" fill="rgba(232,201,122,0.05)"/>
+            <rect x="30" y="50" width="140" height="15" rx="4" fill="rgba(232,201,122,0.15)"/>
+            <line x1="30" y1="80" x2="170" y2="80" stroke="rgba(232,201,122,0.15)" stroke-width="1"/>
+            <circle cx="50" cy="57" r="3" fill="rgba(255,80,80,0.7)"/>
+            <circle cx="62" cy="57" r="3" fill="rgba(255,200,0,0.7)"/>
+            <circle cx="74" cy="57" r="3" fill="rgba(0,200,100,0.7)"/>
+            <path d="M85 95 L120 115 L85 135 Z" fill="rgba(232,201,122,0.5)" stroke="rgba(232,201,122,0.6)" stroke-width="1"/>
+            <rect x="40" y="155" width="120" height="8" rx="4" fill="rgba(232,201,122,0.1)" stroke="rgba(232,201,122,0.2)" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="g-card-count">05</div>
+        <div class="g-card-info"><h3>Reels</h3><p>Go Viral</p></div>
+      </div>
+
+      <!-- Card 6: Portraits -->
+      <div class="g-card">
+        <div class="g-card-art">
+          <svg width="200" height="220" viewBox="0 0 200 220" fill="none">
+            <circle cx="100" cy="75" r="35" fill="rgba(168,85,247,0.12)" stroke="rgba(168,85,247,0.3)" stroke-width="1.5"/>
+            <path d="M40 180 Q100 140 160 180" fill="rgba(168,85,247,0.1)" stroke="rgba(168,85,247,0.25)" stroke-width="1.5"/>
+            <circle cx="100" cy="75" r="22" fill="rgba(168,85,247,0.08)"/>
+            <circle cx="93" cy="70" r="5" fill="rgba(168,85,247,0.5)"/>
+            <circle cx="107" cy="70" r="5" fill="rgba(168,85,247,0.5)"/>
+            <path d="M90 84 Q100 90 110 84" stroke="rgba(168,85,247,0.5)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <rect x="70" y="118" width="60" height="1" fill="rgba(168,85,247,0.2)"/>
+            <circle cx="160" cy="40" r="16" fill="none" stroke="rgba(168,85,247,0.2)" stroke-width="1" stroke-dasharray="3,3"/>
+            <circle cx="40" cy="160" r="12" fill="none" stroke="rgba(168,85,247,0.15)" stroke-width="1" stroke-dasharray="2,4"/>
+          </svg>
+        </div>
+        <div class="g-card-count">06</div>
+        <div class="g-card-info"><h3>Portraits</h3><p>Your Story</p></div>
+      </div>
+
+    </div><!-- /gallery-ring -->
+  </div><!-- /gallery-stage -->
+
+  <div class="gallery-hint reveal">
+    <span>←</span> Drag to Explore <span>→</span>
+  </div>
+  <div class="gallery-dots reveal" id="galleryDots">
+    <div class="g-dot active"></div>
+    <div class="g-dot"></div>
+    <div class="g-dot"></div>
+    <div class="g-dot"></div>
+    <div class="g-dot"></div>
+    <div class="g-dot"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-layout">
+    <div class="reveal"><div id="about-anim"></div></div>
+    <div class="about-text reveal">
+      <div class="section-label">OUR STORY</div>
+      <h2 class="section-title">About <em>DMARK</em></h2>
+      <p>DMARK ADVISE was born from a passion for storytelling through the lens. We believe every moment deserves to be immortalized with artistry and precision — from grand weddings to intimate celebrations.</p>
+      <p>Our team of skilled photographers and videographers bring cutting-edge equipment and creative vision to every project, ensuring your memories are preserved in stunning detail.</p>
+      <div class="about-stats">
+        <div class="stat"><h3>500+</h3><p>EVENTS SHOT</p></div>
+        <div class="stat"><h3>200+</h3><p>WEDDINGS</p></div>
+        <div class="stat"><h3>6K</h3><p>QUALITY</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-layout">
+    <div class="reveal">
+      <div class="section-label">GET IN TOUCH</div>
+      <h2 class="section-title">Let's <em>Connect</em></h2>
+      <div class="contact-info" style="margin-top:32px;">
+        <div class="contact-item"><div class="contact-icon">📞</div><div><h4>PHONE</h4><p>+91 98765 43210</p></div></div>
+        <div class="contact-item"><div class="contact-icon">✉</div><div><h4>EMAIL</h4><p>hello@dmarkadvise.com</p></div></div>
+        <div class="contact-item"><div class="contact-icon">📍</div><div><h4>LOCATION</h4><p>Available Pan India</p></div></div>
+        <div class="contact-item"><div class="contact-icon">📸</div><div><h4>INSTAGRAM</h4><p>@dmarkadvise</p></div></div>
+      </div>
+    </div>
+    <div class="contact-form reveal">
+      <h3>Send a Message</h3>
+      <input type="text" id="cf-name" placeholder="Your Name">
+      <input type="email" id="cf-email" placeholder="Email Address">
+      <input type="text" id="cf-event" placeholder="Event Type">
+      <textarea id="cf-msg" placeholder="Tell us about your event..."></textarea>
+      <button class="btn-book" style="margin-top:0" onclick="sendContactMsg()">SEND MESSAGE</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">DMARK<span>ADVISE</span></div>
+  <p>© 2024 DMARK ADVISE. All rights reserved.</p>
+  <p style="font-size:.72rem;color:var(--gray);">Crafted with 💜</p>
+</footer>
+</div><!-- /main-site -->
+
+<!-- ===== ALL SERVICES MODAL ===== -->
+<div id="all-services-modal">
+  <button class="all-services-close" onclick="closeAllServices()">✕</button>
+  <div class="all-services-inner">
+    <div class="all-services-header">
+      <div class="section-label">CHOOSE YOUR SERVICE</div>
+      <h2>Book a <em>Shoot</em></h2>
+      <p>Select the perfect package for your event.</p>
+    </div>
+    <div class="all-services-grid">
+      <div class="as-card" onclick="switchToModal('birthday')"><div class="as-card-icon">🎂</div><div class="as-card-name">Birthday Shoots</div><div class="as-card-price">₹20,000 <span>/ day</span></div><div class="as-card-desc">Capture every smile, every candle, every precious moment.</div><button class="as-card-btn">BOOK NOW</button></div>
+      <div class="as-card" onclick="switchToModal('wedding')"><div class="as-card-icon">💍</div><div class="as-card-name">Wedding Shoots</div><div class="as-card-price">From ₹40,000</div><div class="as-card-desc">Full coverage from prep to reception.</div><button class="as-card-btn">BOOK NOW</button></div>
+      <div class="as-card" onclick="switchToModal('schoolfest')"><div class="as-card-icon">🎓</div><div class="as-card-name">School Fests</div><div class="as-card-price">₹70,000 <span>/ day</span></div><div class="as-card-desc">Annual days, cultural fests, sports events covered.</div><button class="as-card-btn">BOOK NOW</button></div>
+      <div class="as-card" onclick="switchToModal('function')"><div class="as-card-icon">🎉</div><div class="as-card-name">Functions &amp; Events</div><div class="as-card-price">₹50,000 <span>/ day</span></div><div class="as-card-desc">Corporate events, parties, ceremonies.</div><button class="as-card-btn">BOOK NOW</button></div>
+      <div class="as-card" onclick="switchToModal('reels')"><div class="as-card-icon">🎬</div><div class="as-card-name">Reel Shoots</div><div class="as-card-price">₹10,000 <span>/ 6 reels</span></div><div class="as-card-desc">6 polished videos in trending formats.</div><button class="as-card-btn">BOOK NOW</button></div>
+      <div class="as-card" onclick="switchToModal('youtube')"><div class="as-card-icon">▶️</div><div class="as-card-name">YouTube Videos</div><div class="as-card-price">₹4,000 <span>/ minute</span></div><div class="as-card-desc">Professional production per minute of content.</div><button class="as-card-btn">BOOK NOW</button></div>
+      <div class="as-card" onclick="switchToModal('reels6k')"><div class="as-card-icon">🌟</div><div class="as-card-name">Premium 6K Pack</div><div class="as-card-price">₹6,000 <span>/ 6 videos</span></div><div class="as-card-desc">6 cinematic videos in breathtaking 6K quality.</div><button class="as-card-btn">BOOK NOW</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BOOKING MODALS ===== -->
+<div class="modal-backdrop" id="modal-birthday">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('birthday')">✕</button>
+    <h2>🎂 Birthday Shoots</h2><div class="modal-price">₹20,000 / day</div>
+    <label>YOUR NAME</label><input type="text" id="bday-name" placeholder="Full name">
+    <label>PHONE</label><input type="text" id="bday-phone" placeholder="+91 XXXXX XXXXX">
+    <label>NUMBER OF DAYS</label><input type="number" id="bday-days" min="1" max="10" value="1" oninput="calcBday()">
+    <label>DATE</label><input type="date" id="bday-date">
+    <label>TIME</label><input type="time" id="bday-time">
+    <label>EVENT ADDRESS</label><textarea id="bday-address" placeholder="Full address where the event is happening..."></textarea>
+    <label>VENUE TYPE</label>
+    <div class="radio-group"><div class="radio-btn selected" onclick="selectRadio(this)">INDOOR</div><div class="radio-btn" onclick="selectRadio(this)">OUTDOOR</div></div>
+    <div class="total-price"><span>TOTAL AMOUNT</span><strong id="bday-total">₹20,000</strong></div>
+    <button class="btn-book" onclick="bookSlot('Birthday','birthday')">📅 BOOK SLOT</button>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-wedding">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('wedding')">✕</button>
+    <h2>💍 Wedding Shoots</h2><div class="modal-price">Choose Your Package</div>
+    <label>YOUR NAME</label><input type="text" id="wed-name" placeholder="Full name">
+    <label>PHONE</label><input type="text" id="wed-phone" placeholder="+91 XXXXX XXXXX">
+    <label>DATE</label><input type="date" id="wed-date">
+    <label>TIME</label><input type="time" id="wed-time">
+    <label>WEDDING VENUE ADDRESS</label><textarea id="wed-address" placeholder="Full address of the wedding venue..."></textarea>
+    <label>SELECT PACKAGE</label>
+    <div class="wedding-options">
+      <div class="wedding-opt selected" onclick="selectWedding(this,40000)"><div><h4>Bride Only</h4><p>Complete bridal coverage</p></div><div class="w-price">₹40,000</div></div>
+      <div class="wedding-opt" onclick="selectWedding(this,40000)"><div><h4>Groom Only</h4><p>Complete groom coverage</p></div><div class="w-price">₹40,000</div></div>
+      <div class="wedding-opt" onclick="selectWedding(this,70000)"><div><h4>Whole Wedding Pack</h4><p>Full bride + groom + ceremony</p></div><div class="w-price">₹70,000</div></div>
+    </div>
+    <div class="total-price"><span>TOTAL AMOUNT</span><strong id="wed-total">₹40,000</strong></div>
+    <button class="btn-book" onclick="bookSlot('Wedding','wedding')">📅 BOOK SLOT</button>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-schoolfest">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('schoolfest')">✕</button>
+    <h2>🎓 School Fests</h2><div class="modal-price">₹70,000 / day</div>
+    <label>YOUR NAME</label><input type="text" id="school-name" placeholder="Full name">
+    <label>PHONE</label><input type="text" id="school-phone" placeholder="+91 XXXXX XXXXX">
+    <label>NUMBER OF DAYS</label><input type="number" id="school-days" min="1" max="10" value="1" oninput="calcSchool()">
+    <label>DATE</label><input type="date" id="school-date">
+    <label>TIME</label><input type="time" id="school-time">
+    <label>SCHOOL / EVENT ADDRESS</label><textarea id="school-address" placeholder="Full address of the school or event venue..."></textarea>
+    <label>VENUE TYPE</label>
+    <div class="radio-group"><div class="radio-btn selected" onclick="selectRadio(this)">INDOOR</div><div class="radio-btn" onclick="selectRadio(this)">OUTDOOR</div></div>
+    <div class="total-price"><span>TOTAL AMOUNT</span><strong id="school-total">₹70,000</strong></div>
+    <button class="btn-book" onclick="bookSlot('School Fest','schoolfest')">📅 BOOK SLOT</button>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-function">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('function')">✕</button>
+    <h2>🎉 Functions &amp; Events</h2><div class="modal-price">₹50,000 / day</div>
+    <label>YOUR NAME</label><input type="text" id="func-name" placeholder="Full name">
+    <label>PHONE</label><input type="text" id="func-phone" placeholder="+91 XXXXX XXXXX">
+    <label>NUMBER OF DAYS</label><input type="number" id="func-days" min="1" max="10" value="1" oninput="calcFunc()">
+    <label>DATE</label><input type="date" id="func-date">
+    <label>TIME</label><input type="time" id="func-time">
+    <label>EVENT ADDRESS</label><textarea id="func-address" placeholder="Full address of the function / event venue..."></textarea>
+    <div class="total-price"><span>TOTAL AMOUNT</span><strong id="func-total">₹50,000</strong></div>
+    <button class="btn-book" onclick="bookSlot('Function','function')">📅 BOOK SLOT</button>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-reels">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('reels')">✕</button>
+    <h2>🎬 Reel Shoots</h2><div class="modal-price">₹10,000 — 6 Videos</div>
+    <label>YOUR NAME</label><input type="text" id="reels-name" placeholder="Full name">
+    <label>PHONE</label><input type="text" id="reels-phone" placeholder="+91 XXXXX XXXXX">
+    <label>PREFERRED DATE</label><input type="date" id="reels-date">
+    <label>SHOOT LOCATION / ADDRESS</label><textarea id="reels-address" placeholder="Address or describe the shoot location..."></textarea>
+    <label>PLATFORM</label>
+    <div class="radio-group"><div class="radio-btn selected" onclick="selectRadio(this)">INSTAGRAM</div><div class="radio-btn" onclick="selectRadio(this)">YOUTUBE</div><div class="radio-btn" onclick="selectRadio(this)">BOTH</div></div>
+    <div class="total-price"><span>PACKAGE</span><strong>₹10,000</strong></div>
+    <button class="btn-book" onclick="bookSlot('Reel Shoot','reels')">📅 BOOK NOW</button>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-youtube">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('youtube')">✕</button>
+    <h2>▶️ YouTube Videos</h2><div class="modal-price">₹4,000 / minute</div>
+    <label>YOUR NAME</label><input type="text" id="yt-name" placeholder="Full name">
+    <label>PHONE</label><input type="text" id="yt-phone" placeholder="+91 XXXXX XXXXX">
+    <label>VIDEO DURATION (MINUTES)</label><input type="number" id="yt-mins" min="1" max="120" value="5" oninput="calcYT()">
+    <label>PREFERRED DATE</label><input type="date" id="yt-date">
+    <label>SHOOT LOCATION / ADDRESS</label><textarea id="yt-address" placeholder="Address or describe the shoot location..."></textarea>
+    <label>TOPIC / DESCRIPTION</label><input type="text" id="yt-topic" placeholder="What is this video about?">
+    <div class="total-price"><span>TOTAL AMOUNT</span><strong id="yt-total">₹20,000</strong></div>
+    <button class="btn-book" onclick="bookSlot('YouTube Video','youtube')">📅 BOOK NOW</button>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-reels6k">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('reels6k')">✕</button>
+    <h2>🌟 Premium 6K Reel Pack</h2><div class="modal-price">₹6,000 — 6 Videos in 6K</div>
+    <label>YOUR NAME</label><input type="text" id="reel6k-name" placeholder="Full name">
+    <label>PHONE</label><input type="text" id="reel6k-phone" placeholder="+91 XXXXX XXXXX">
+    <label>PREFERRED DATE</label><input type="date" id="reel6k-date">
+    <label>SHOOT LOCATION / ADDRESS</label><textarea id="reel6k-address" placeholder="Address or describe the shoot location..."></textarea>
+    <label>VENUE TYPE</label>
+    <div class="radio-group"><div class="radio-btn selected" onclick="selectRadio(this)">INDOOR</div><div class="radio-btn" onclick="selectRadio(this)">OUTDOOR</div></div>
+    <div class="total-price"><span>PACKAGE</span><strong>₹6,000</strong></div>
+    <button class="btn-book" onclick="bookSlot('6K Reel Pack','reels6k')">📅 BOOK NOW</button>
+  </div>
+</div>
+
+<!-- ===== THANK YOU POPUP ===== -->
+<div id="thankyou-popup">
+  <div class="ty-card">
+    <div class="ty-checkring">✓</div>
+    <h2>Booking Confirmed!</h2>
+    <div class="ty-service" id="ty-service-label">BIRTHDAY SHOOT</div>
+    <p>Thank you for contacting <strong>DMARK ADVISE</strong>.<br>Your slot has been registered successfully.</p>
+    <div class="ty-divider"></div>
+    <p class="ty-contact">Our team will contact you in <span>a few minutes</span> to confirm your booking details.</p>
+    <button class="ty-close" onclick="closeThankyou()">DONE ✓</button>
+  </div>
+</div>
+
+<script>
+// LOTTIE
+bodymovin.loadAnimation({wrapper:document.getElementById('animationWindow'),animType:'svg',loop:true,autoplay:true,path:'https://s3-us-west-2.amazonaws.com/s.cdpn.io/35984/3D_camera.json'}).setSpeed(1.6);
+bodymovin.loadAnimation({wrapper:document.getElementById('page-transition-anim'),animType:'svg',loop:true,autoplay:true,path:'https://s3-us-west-2.amazonaws.com/s.cdpn.io/35984/3D_camera.json'}).setSpeed(2);
+setTimeout(()=>{
+  bodymovin.loadAnimation({wrapper:document.getElementById('reels-anim'),animType:'svg',loop:true,autoplay:true,path:'https://s3-us-west-2.amazonaws.com/s.cdpn.io/35984/3D_camera.json'}).setSpeed(1.2);
+  bodymovin.loadAnimation({wrapper:document.getElementById('about-anim'),animType:'svg',loop:true,autoplay:true,path:'https://s3-us-west-2.amazonaws.com/s.cdpn.io/35984/3D_camera.json'}).setSpeed(.9);
+},3000);
+
+// LOADING
+setTimeout(()=>{
+  document.getElementById('overlay').classList.add('hide');
+  setTimeout(()=>{document.getElementById('overlay').style.display='none';},800);
+},2800);
+
+// AUTH
+function switchTab(tab){
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&tab==='login')||(i===1&&tab==='register')));
+  document.getElementById('login-form').classList.toggle('active',tab==='login');
+  document.getElementById('register-form').classList.toggle('active',tab==='register');
+}
+function enterSite(){
+  triggerTransition();
+  setTimeout(()=>{
+    document.getElementById('auth-page').classList.add('hidden');
+    document.getElementById('main-site').classList.add('visible');
+    initReveal();
+  },600);
+  setTimeout(()=>{document.getElementById('page-transition').classList.remove('active');},1200);
+}
+function triggerTransition(){
+  const pt=document.getElementById('page-transition');
+  pt.classList.add('active');
+  setTimeout(()=>pt.classList.remove('active'),900);
+}
+function goTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+
+// REVEAL
+function initReveal(){
+  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.08});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}
+
+// ALL SERVICES
+function openAllServices(){
+  document.getElementById('all-services-modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeAllServices(){
+  document.getElementById('all-services-modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+function switchToModal(type){closeAllServices();setTimeout(()=>openModal(type),200);}
+
+// MODALS
+function openModal(type){
+  document.getElementById('modal-'+type).classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(type){
+  document.getElementById('modal-'+type).classList.remove('open');
+  document.body.style.overflow='';
+}
+document.querySelectorAll('.modal-backdrop').forEach(bd=>{
+  bd.addEventListener('click',e=>{if(e.target===bd){bd.classList.remove('open');document.body.style.overflow='';}});
+});
+
+// RADIO
+function selectRadio(el){
+  el.closest('.radio-group').querySelectorAll('.radio-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+// WEDDING
+let weddingPrice=40000;
+function selectWedding(el,price){
+  document.querySelectorAll('.wedding-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');weddingPrice=price;
+  document.getElementById('wed-total').textContent='₹'+price.toLocaleString('en-IN');
+}
+// CALC
+function calcBday(){const d=parseInt(document.getElementById('bday-days').value)||1;document.getElementById('bday-total').textContent='₹'+(d*20000).toLocaleString('en-IN');}
+function calcSchool(){const d=parseInt(document.getElementById('school-days').value)||1;document.getElementById('school-total').textContent='₹'+(d*70000).toLocaleString('en-IN');}
+function calcFunc(){const d=parseInt(document.getElementById('func-days').value)||1;document.getElementById('func-total').textContent='₹'+(d*50000).toLocaleString('en-IN');}
+function calcYT(){const m=parseInt(document.getElementById('yt-mins').value)||1;document.getElementById('yt-total').textContent='₹'+(m*4000).toLocaleString('en-IN');}
+
+// BOOK SLOT — save to localStorage + show popup
+function bookSlot(serviceName, modalKey){
+  // gather common fields
+  const nameEl = document.getElementById(modalKey.replace(/[^a-z]/g,'')+'-name') || document.getElementById('reels-name') || document.getElementById('yt-name') || document.getElementById('reel6k-name');
+  const booking = {
+    id: Date.now(),
+    service: serviceName,
+    timestamp: new Date().toISOString(),
+    status: 'new',
+    amount: document.getElementById(modalKey+'-total') ? document.getElementById(modalKey+'-total').textContent : getStaticPrice(serviceName),
+  };
+  // save
+  const bookings = JSON.parse(localStorage.getItem('dmark_bookings')||'[]');
+  bookings.unshift(booking);
+  localStorage.setItem('dmark_bookings', JSON.stringify(bookings));
+  // close modal
+  closeModal(modalKey);
+  // show thank you
+  document.getElementById('ty-service-label').textContent = serviceName.toUpperCase();
+  const popup = document.getElementById('thankyou-popup');
+  popup.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function getStaticPrice(s){
+  const m={'Reel Shoot':'₹10,000','YouTube Video':'₹20,000','6K Reel Pack':'₹6,000','Wedding':'₹40,000'};
+  return m[s]||'—';
+}
+function closeThankyou(){
+  document.getElementById('thankyou-popup').classList.remove('show');
+  document.body.style.overflow='';
+}
+
+// CONTACT
+function sendContactMsg(){
+  const name=document.getElementById('cf-name').value;
+  const email=document.getElementById('cf-email').value;
+  const event=document.getElementById('cf-event').value;
+  const msg=document.getElementById('cf-msg').value;
+  if(!name&&!email){alert('Please fill in your details.');return;}
+  const msgs=JSON.parse(localStorage.getItem('dmark_messages')||'[]');
+  msgs.unshift({id:Date.now(),name,email,event,msg,timestamp:new Date().toISOString(),status:'new'});
+  localStorage.setItem('dmark_messages',JSON.stringify(msgs));
+  document.getElementById('ty-service-label').textContent='CONTACT MESSAGE';
+  const popup=document.getElementById('thankyou-popup');
+  popup.classList.add('show');
+  document.body.style.overflow='hidden';
+  document.getElementById('cf-name').value='';
+  document.getElementById('cf-email').value='';
+  document.getElementById('cf-event').value='';
+  document.getElementById('cf-msg').value='';
+}
+
+// ===========================
+// PREMIUM GALLERY DRAG
+// ===========================
+const ring = document.getElementById('galleryRing');
+const dots = document.querySelectorAll('.g-dot');
+let isDragging=false, startX=0, startAngle=0, currentAngle=0;
+let animPaused=false;
+
+function getComputedAngle(){
+  const st=window.getComputedStyle(ring);
+  const tr=st.transform;
+  if(!tr||tr==='none') return 0;
+  try{
+    const m=new DOMMatrix(tr);
+    return Math.atan2(m.m13,m.m33)*(180/Math.PI);
+  }catch{return currentAngle;}
+}
+
+function pauseAnim(){
+  if(animPaused) return;
+  animPaused=true;
+  currentAngle=getComputedAngle();
+  ring.style.animationPlayState='paused';
+  ring.style.transform=`rotateY(${currentAngle}deg)`;
+}
+function resumeAnim(){
+  animPaused=false;
+  ring.style.animationPlayState='running';
+}
+
+ring.addEventListener('mousedown',e=>{
+  isDragging=true;startX=e.clientX;pauseAnim();startAngle=currentAngle;e.preventDefault();
+});
+document.addEventListener('mousemove',e=>{
+  if(!isDragging) return;
+  const delta=(e.clientX-startX)*0.35;
+  currentAngle=startAngle+delta;
+  ring.style.transform=`rotateY(${currentAngle}deg)`;
+  updateDots();
+});
+document.addEventListener('mouseup',()=>{if(isDragging){isDragging=false;resumeAnim();}});
+
+ring.addEventListener('touchstart',e=>{
+  isDragging=true;startX=e.touches[0].clientX;pauseAnim();startAngle=currentAngle;
+},{passive:true});
+ring.addEventListener('touchmove',e=>{
+  if(!isDragging) return;
+  const delta=(e.touches[0].clientX-startX)*0.35;
+  currentAngle=startAngle+delta;
+  ring.style.transform=`rotateY(${currentAngle}deg)`;
+  updateDots();
+},{passive:true});
+ring.addEventListener('touchend',()=>{if(isDragging){isDragging=false;resumeAnim();}});
+
+function updateDots(){
+  const normalized=((currentAngle%360)+360)%360;
+  const idx=Math.round(normalized/60)%6;
+  dots.forEach((d,i)=>d.classList.toggle('active',i===idx));
+}
+
+// auto-update dots during auto-rotation
+setInterval(()=>{
+  if(!animPaused&&!isDragging){
+    currentAngle=getComputedAngle();
+    updateDots();
+  }
+},300);
+</script>
+</body>
+</html>
