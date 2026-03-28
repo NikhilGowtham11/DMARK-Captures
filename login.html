@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dmark Captures | Login</title>
+<style>
+  :root {
+    --black:   #0a0a0a;
+    --purple:  #6b21a8;
+    --purple-l:#a855f7;
+    --purple-s:#f3e8ff;
+    --gold:    #d4a853;
+    --gray:    #6b7280;
+    --border:  #e5e7eb;
+    --bg:      #f9fafb;
+    --error:   #ef4444;
+    --ok:      #16a34a;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family:'DM Sans',sans-serif;
+    background: white;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* ══ LEFT — black/purple decorative panel ══ */
+  .left {
+    background: var(--black);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 3rem 2.5rem;
+    position: relative; overflow: hidden;
+  }
+  /* glow blobs */
+  .left::before {
+    content:''; position:absolute;
+    width:420px; height:420px;
+    background: radial-gradient(circle, rgba(107,33,168,0.45) 0%, transparent 65%);
+    top:-80px; left:-80px; pointer-events:none;
+  }
+  .left::after {
+    content:''; position:absolute;
+    width:300px; height:300px;
+    background: radial-gradient(circle, rgba(212,168,83,0.12) 0%, transparent 65%);
+    bottom:-60px; right:-40px; pointer-events:none;
+  }
+  .left-inner { position:relative; z-index:1; text-align:center; }
+
+  /* CSS camera art */
+  .cam {
+    width:100px; height:76px;
+    position:relative; margin:0 auto 1.8rem;
+    filter: drop-shadow(0 0 18px rgba(168,85,247,0.55));
+  }
+  .cam-top {
+    width:60px; height:16px;
+    background: linear-gradient(135deg,#2a2a2a,#1a1a1a);
+    border:2px solid rgba(168,85,247,0.35);
+    border-radius:6px 6px 0 0;
+    position:absolute; top:0; right:8px;
+  }
+  .cam-body {
+    width:100px; height:58px;
+    background: linear-gradient(135deg,#282828,#181818);
+    border:2px solid rgba(168,85,247,0.4);
+    border-radius:8px 8px 6px 6px;
+    position:absolute; bottom:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .cam-lens {
+    width:38px; height:38px; border-radius:50%;
+    background: radial-gradient(circle at 35% 35%,
+      #3a3a3a 0%,#1a1a1a 40%,#000 60%,rgba(168,85,247,0.25) 85%,transparent 100%);
+    border:3px solid #444;
+    box-shadow: 0 0 0 2px #2a2a2a, 0 0 10px rgba(168,85,247,0.5);
+  }
+  .cam-flash {
+    width:15px; height:11px; border-radius:3px;
+    background:rgba(168,85,247,0.25);
+    border:1px solid rgba(168,85,247,0.45);
+    position:absolute; top:14px; left:8px;
+    animation: fl 3s ease-in-out infinite;
+  }
+  @keyframes fl {
+    0%,90%,100% { background:rgba(168,85,247,0.2); box-shadow:none; }
+    93%          { background:rgba(255,255,255,0.9); box-shadow:0 0 10px #fff; }
+  }
+
+  .brand {
+    font-family:'Playfair Display',serif;
+    font-size:2rem; font-weight:900; color:white; margin-bottom:.4rem;
+  }
+  .brand span { color:var(--purple-l); }
+
+  .tagline {
+    color:rgba(255,255,255,0.42); font-size:.86rem;
+    line-height:1.7; max-width:270px; margin:0 auto 2.2rem;
+  }
+
+  /* testimonial card */
+  .tcard {
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(168,85,247,0.22);
+    border-radius:14px; padding:1.2rem 1.3rem;
+    max-width:290px; text-align:left;
+  }
+  .tcard-q { color:rgba(255,255,255,0.65); font-size:.86rem; line-height:1.65; font-style:italic; margin-bottom:.75rem; }
+  .tcard-author { display:flex; align-items:center; gap:10px; }
+  .tcard-dot {
+    width:30px; height:30px; border-radius:50%;
+    background:var(--purple); display:flex;
+    align-items:center; justify-content:center;
+    font-weight:700; color:white; font-size:.82rem; flex-shrink:0;
+  }
+  .tcard-name { font-size:.8rem; font-weight:600; color:rgba(255,255,255,0.8); }
+  .tcard-role { font-size:.72rem; color:rgba(255,255,255,0.32); }
+
+  /* ══ RIGHT — white form panel ══ */
+  .right {
+    background: white;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:3rem 2.5rem;
+    overflow-y:auto;
+  }
+  .form-wrap { width:100%; max-width:390px; }
+
+  /* back link */
+  .back {
+    display:inline-flex; align-items:center; gap:6px;
+    color:var(--gray); font-size:.82rem;
+    text-decoration:none; margin-bottom:1.8rem;
+    transition:color .2s;
+  }
+  .back:hover { color:var(--purple); }
+
+  /* tabs */
+  .tabs {
+    display:flex; background:var(--bg);
+    border:1.5px solid var(--border);
+    border-radius:10px; padding:4px; margin-bottom:2rem;
+  }
+  .tab {
+    flex:1; padding:10px; border:none; background:none;
+    border-radius:7px; font-size:.9rem; font-weight:600;
+    font-family:'DM Sans',sans-serif; color:var(--gray);
+    cursor:pointer; transition:all .25s;
+  }
+  .tab.active { background:var(--black); color:white; box-shadow:0 2px 8px rgba(0,0,0,0.18); }
+
+  /* panels */
+  .panel { display:none; }
+  .panel.active { display:block; }
+
+  /* heading */
+  .h1 { font-family:'Playfair Display',serif; font-size:1.65rem; font-weight:900; color:var(--black); margin-bottom:.3rem; }
+  .sub { color:var(--gray); font-size:.875rem; margin-bottom:1.6rem; line-height:1.5; }
+
+  /* toast */
+  .toast { display:none; padding:11px 14px; border-radius:9px; font-size:.86rem; font-weight:500; margin-bottom:1rem; text-align:center; }
+  .toast.ok  { display:block; background:#f0fdf4; border:1px solid #bbf7d0; color:var(--ok); }
+  .toast.bad { display:block; background:#fef2f2; border:1px solid #fecaca; color:var(--error); }
+
+  /* field */
+  .field { display:flex; flex-direction:column; gap:5px; margin-bottom:1rem; }
+  .field label { font-size:.77rem; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--black); }
+  .field input {
+    background:white; border:1.5px solid var(--border);
+    border-radius:8px; padding:11px 15px;
+    color:var(--black); font-size:.95rem;
+    font-family:'DM Sans',sans-serif; outline:none;
+    transition:border-color .2s, box-shadow .2s; width:100%;
+  }
+  .field input:focus { border-color:var(--purple); box-shadow:0 0 0 3px rgba(107,33,168,0.1); }
+  .field input.err { border-color:var(--error); }
+  .ferr { font-size:.75rem; color:var(--error); display:none; }
+  .ferr.show { display:block; }
+
+  /* pw eye */
+  .pw-wrap { position:relative; }
+  .pw-wrap input { padding-right:42px; }
+  .eye { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--gray); cursor:pointer; font-size:.92rem; padding:0; transition:color .2s; }
+  .eye:hover { color:var(--purple); }
+
+  /* strength bar */
+  .str { margin-top:4px; }
+  .str-bar { height:3px; background:var(--border); border-radius:2px; overflow:hidden; }
+  .str-fill { height:100%; width:0%; border-radius:2px; transition:width .3s,background .3s; }
+  .str-lbl { font-size:.7rem; color:var(--gray); margin-top:3px; }
+
+  /* forgot */
+  .forgot { text-align:right; margin:-4px 0 12px; }
+  .forgot a { font-size:.8rem; color:var(--purple); text-decoration:none; font-weight:600; }
+  .forgot a:hover { text-decoration:underline; }
+
+  /* btn */
+  .btn {
+    width:100%; padding:13px;
+    background:var(--black); color:white; border:none;
+    border-radius:8px; font-size:.95rem; font-weight:700;
+    font-family:'DM Sans',sans-serif; cursor:pointer;
+    transition:background .2s,transform .15s; margin-top:.3rem;
+  }
+  .btn:hover { background:var(--purple); transform:translateY(-1px); }
+
+  /* divider */
+  .div { display:flex; align-items:center; gap:10px; margin:1.3rem 0; }
+  .div span { flex:1; height:1px; background:var(--border); }
+  .div em { font-style:normal; font-size:.78rem; color:var(--gray); }
+
+  /* google */
+  .gbtn {
+    width:100%; padding:11px;
+    background:white; border:1.5px solid var(--border);
+    border-radius:8px; font-size:.88rem; font-weight:600;
+    font-family:'DM Sans',sans-serif; color:var(--black);
+    cursor:pointer; display:flex; align-items:center; justify-content:center; gap:9px;
+    transition:border-color .2s,box-shadow .2s;
+  }
+  .gbtn:hover { border-color:var(--purple); box-shadow:0 0 0 3px rgba(107,33,168,0.08); }
+
+  /* note */
+  .note { text-align:center; margin-top:1.3rem; font-size:.8rem; color:var(--gray); }
+  .note a { color:var(--purple); text-decoration:none; font-weight:600; }
+  .note a:hover { text-decoration:underline; }
+
+  /* purple accent line at top of right panel */
+  .right::before {
+    content:''; display:block; position:fixed;
+    top:0; right:0; width:50%; height:3px;
+    background:linear-gradient(90deg, var(--purple), var(--purple-l), var(--gold));
+  }
+
+  @media (max-width:700px) {
+    body { grid-template-columns:1fr; }
+    .left { display:none; }
+    .right::before { width:100%; }
+    .right { padding:2rem 1.5rem; justify-content:flex-start; padding-top:3rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ LEFT ══ -->
+<div class="left">
+  <div class="left-inner">
+    <div class="cam">
+      <div class="cam-top"></div>
+      <div class="cam-body"><div class="cam-lens"></div></div>
+      <div class="cam-flash"></div>
+    </div>
+    <div class="brand">Dmark<span>Captures</span></div>
+    <p class="tagline">Every frame tells a story worth keeping.<br>Professional photography — weddings, events &amp; beyond.</p>
+    <div class="tcard">
+      <div class="tcard-q">"Dmark Captures made our wedding absolutely unforgettable. Every photo is a masterpiece!"</div>
+      <div class="tcard-author">
+        <div class="tcard-dot">R</div>
+        <div>
+          <div class="tcard-name">Ravi &amp; Priya</div>
+          <div class="tcard-role">Wedding Couple, Hyderabad</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RIGHT ══ -->
+<div class="right">
+  <div class="form-wrap">
+
+    <a href="dmark-captures.html" class="back">← Back to Dmark Captures</a>
+
+    <div class="tabs">
+      <button class="tab active" id="tLogin"    onclick="go('login')">Login</button>
+      <button class="tab"        id="tRegister" onclick="go('register')">Register</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="panel active" id="pLogin">
+      <div class="h1">Welcome back 👋</div>
+      <div class="sub">Sign in to your Dmark Captures account</div>
+      <div class="toast" id="tLogin_msg"></div>
+
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="lEmail" placeholder="you@example.com">
+        <span class="ferr" id="lEmailErr">Enter a valid email.</span>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="lPwd" placeholder="Your password">
+          <button class="eye" type="button" onclick="togglePw('lPwd',this)">👁</button>
+        </div>
+        <span class="ferr" id="lPwdErr">Password is required.</span>
+      </div>
+
+      <div class="forgot"><a href="#">Forgot password?</a></div>
+      <button class="btn" onclick="doLogin()">Sign In →</button>
+
+      <div class="div"><span></span><em>or</em><span></span></div>
+      
+      </button>
+      <div class="note">No account? <a href="#" onclick="go('register');return false">Register here</a></div>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="panel" id="pRegister">
+      <div class="h1">Create account ✨</div>
+      <div class="sub">Join Dmark Captures — it's free</div>
+      <div class="toast" id="tReg_msg"></div>
+
+      <div class="field">
+        <label>Full Name</label>
+        <input type="text" id="rName" placeholder="Your full name">
+        <span class="ferr" id="rNameErr">Name is required.</span>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="rEmail" placeholder="you@example.com">
+        <span class="ferr" id="rEmailErr">Enter a valid email.</span>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="rPwd" placeholder="Min 8 characters" oninput="strength(this.value)">
+          <button class="eye" type="button" onclick="togglePw('rPwd',this)">👁</button>
+        </div>
+        <div class="str">
+          <div class="str-bar"><div class="str-fill" id="sFill"></div></div>
+          <div class="str-lbl" id="sLbl">Enter a password</div>
+        </div>
+        <span class="ferr" id="rPwdErr">Min 8 characters.</span>
+      </div>
+      <div class="field">
+        <label>Confirm Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="rPwd2" placeholder="Repeat password">
+          <button class="eye" type="button" onclick="togglePw('rPwd2',this)">👁</button>
+        </div>
+        <span class="ferr" id="rPwd2Err">Passwords don't match.</span>
+      </div>
+
+      <button class="btn" onclick="doReg()">Create Account →</button>
+      <div class="div"><span></span><em>or</em><span></span></div>
+      <button class="gbtn" onclick="alert('Google signup coming soon!')">
+        <svg width="17" height="17" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.36-8.16 2.36-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Continue with Google
+      </button>
+      <div class="note">Already registered? <a href="#" onclick="go('login');return false">Sign in</a></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  /* seed default admin */
+  (function(){
+    const u = JSON.parse(localStorage.getItem('dmUsers')||'[]');
+    if(!u.find(x=>x.email==='admin@dmarkcaptures.com')){
+      u.push({name:'Admin',email:'admin@dmarkcaptures.com',pwd:'Admin@1234',role:'admin',createdAt:new Date().toISOString()});
+      localStorage.setItem('dmUsers',JSON.stringify(u));
+    }
+  })();
+
+  function go(tab){
+    ['Login','Register'].forEach(t=>{
+      document.getElementById('p'+t).classList.toggle('active',t.toLowerCase()===tab);
+      document.getElementById('t'+t).classList.toggle('active',t.toLowerCase()===tab);
+    });
+    clr();
+  }
+
+  function togglePw(id,btn){
+    const i=document.getElementById(id);
+    const s=i.type==='password';
+    i.type=s?'text':'password';
+    btn.textContent=s?'🙈':'👁';
+  }
+
+  function strength(v){
+    let s=0;
+    if(v.length>=8)s++;
+    if(/[A-Z]/.test(v))s++;
+    if(/[0-9]/.test(v))s++;
+    if(/[^A-Za-z0-9]/.test(v))s++;
+    const m=[
+      {w:'0%',  c:'transparent',t:'Enter a password'},
+      {w:'25%', c:'#ef4444',    t:'Weak'},
+      {w:'50%', c:'#f97316',    t:'Fair'},
+      {w:'75%', c:'#eab308',    t:'Good'},
+      {w:'100%',c:'#16a34a',    t:'Strong 💪'},
+    ][s];
+    document.getElementById('sFill').style.cssText=`width:${m.w};background:${m.c}`;
+    const lbl=document.getElementById('sLbl');
+    lbl.textContent=m.t; lbl.style.color=m.c==='transparent'?'#9ca3af':m.c;
+  }
+
+  function err(inId,eId,msg){
+    document.getElementById(inId).classList.add('err');
+    const e=document.getElementById(eId);
+    if(msg)e.textContent=msg;
+    e.classList.add('show');
+  }
+  function clr(){
+    document.querySelectorAll('.err').forEach(e=>e.classList.remove('err'));
+    document.querySelectorAll('.ferr').forEach(e=>e.classList.remove('show'));
+    document.querySelectorAll('.toast').forEach(t=>{t.className='toast';t.textContent='';});
+  }
+  function toast(id,msg,type){
+    const el=document.getElementById(id);
+    el.textContent=msg; el.className='toast '+type;
+  }
+
+  function doLogin(){
+    clr();
+    const email=document.getElementById('lEmail').value.trim();
+    const pwd=document.getElementById('lPwd').value;
+    let ok=true;
+    if(!email||!/\S+@\S+\.\S+/.test(email)){err('lEmail','lEmailErr');ok=false;}
+    if(!pwd){err('lPwd','lPwdErr');ok=false;}
+    if(!ok)return;
+
+    const users=JSON.parse(localStorage.getItem('dmUsers')||'[]');
+    const user=users.find(u=>u.email===email&&u.pwd===pwd);
+    if(!user){ err('lEmail','lEmailErr','Invalid email or password.'); return; }
+
+    sessionStorage.setItem('dmCurrentUser',JSON.stringify({name:user.name,email:user.email,role:user.role}));
+    toast('tLogin_msg', user.role==='admin'
+      ? '✅ Welcome Admin! Going to dashboard…'
+      : '✅ Login successful! Redirecting…', 'ok');
+
+    setTimeout(()=>{ window.location.href = user.role==='admin' ? 'dmark-admin.html' : 'dmark-captures.html'; }, 1200);
+  }
+
+  function doReg(){
+    clr();
+    const name=document.getElementById('rName').value.trim();
+    const email=document.getElementById('rEmail').value.trim();
+    const pwd=document.getElementById('rPwd').value;
+    const pwd2=document.getElementById('rPwd2').value;
+    let ok=true;
+    if(!name){err('rName','rNameErr');ok=false;}
+    if(!email||!/\S+@\S+\.\S+/.test(email)){err('rEmail','rEmailErr');ok=false;}
+    if(pwd.length<8){err('rPwd','rPwdErr');ok=false;}
+    if(pwd!==pwd2){err('rPwd2','rPwd2Err');ok=false;}
+    if(!ok)return;
+
+    const users=JSON.parse(localStorage.getItem('dmUsers')||'[]');
+    if(users.find(u=>u.email===email)){ err('rEmail','rEmailErr','Email already registered.'); return; }
+
+    users.push({name,email,pwd,role:'user',createdAt:new Date().toISOString()});
+    localStorage.setItem('dmUsers',JSON.stringify(users));
+
+    toast('tReg_msg','🎉 Account created! Please sign in.','ok');
+    setTimeout(()=>go('login'), 1500);
+  }
+</script>
+</body>
+</html>
