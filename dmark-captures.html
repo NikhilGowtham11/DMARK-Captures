@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dmark Captures | Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black:#0a0a0a; --bg:#111114; --surface:#18181d;
+    --border:rgba(255,255,255,0.08); --purple:#6b21a8;
+    --purple-light:#a855f7; --purple-soft:rgba(107,33,168,0.15);
+    --gold:#d4a853; --gold-light:#f0c97a; --gray:#888;
+    --danger:#ef4444; --success:#22c55e;
+    --text:rgba(255,255,255,0.88); --text-muted:rgba(255,255,255,0.4);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+  /* SIDEBAR */
+  .sidebar{position:fixed;top:0;left:0;bottom:0;width:240px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;}
+  .sb-brand{padding:1.5rem 1.4rem 1.2rem;border-bottom:1px solid var(--border);}
+  .sb-brand-name{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:var(--purple-light);}
+  .sb-brand-name span{color:var(--text-muted);}
+  .sb-brand-tag{font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-top:3px;}
+  .sb-nav{flex:1;padding:1rem 0;overflow-y:auto;}
+  .sb-section-label{font-size:0.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);padding:0.5rem 1.4rem 0.4rem;}
+  .sb-link{display:flex;align-items:center;gap:10px;padding:10px 1.4rem;color:var(--text-muted);font-size:0.9rem;font-weight:500;cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:background 0.15s,color 0.15s;text-decoration:none;position:relative;}
+  .sb-link:hover{background:rgba(255,255,255,0.04);color:var(--text);}
+  .sb-link.active{background:var(--purple-soft);color:var(--purple-light);border-right:3px solid var(--purple-light);}
+  .sb-link .icon{font-size:1rem;width:20px;text-align:center;}
+  /* Notification badge on sidebar */
+  .sb-badge{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:var(--danger);color:white;font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:10px;min-width:18px;text-align:center;}
+  .sb-bottom{padding:1rem 1.4rem;border-top:1px solid var(--border);}
+  .sb-user-row{display:flex;align-items:center;gap:10px;margin-bottom:0.8rem;}
+  .sb-avatar{width:34px;height:34px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;color:white;flex-shrink:0;}
+  .sb-user-name{font-size:0.85rem;font-weight:600;}
+  .sb-user-role{font-size:0.72rem;color:var(--text-muted);}
+  .sb-logout{width:100%;padding:9px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);border-radius:8px;color:#fca5a5;font-size:0.85rem;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background 0.2s;}
+  .sb-logout:hover{background:rgba(239,68,68,0.2);}
+
+  /* MAIN */
+  .main{margin-left:240px;padding:2rem 2.5rem;min-height:100vh;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;}
+  .page-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:800;color:white;}
+  .page-subtitle{color:var(--text-muted);font-size:0.88rem;margin-top:2px;}
+  .view-site-btn{background:var(--purple-soft);color:var(--purple-light);border:1px solid rgba(107,33,168,0.3);padding:9px 18px;border-radius:8px;font-size:0.85rem;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif;transition:background 0.2s;display:inline-flex;align-items:center;gap:6px;}
+  .view-site-btn:hover{background:rgba(107,33,168,0.25);}
+
+  /* STAT CARDS */
+  .stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:1rem;margin-bottom:2rem;}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.3rem 1.5rem;position:relative;overflow:hidden;}
+  .stat-card.new-alert{border-color:rgba(239,68,68,0.4);}
+  .stat-icon{font-size:1.4rem;margin-bottom:0.5rem;}
+  .stat-num{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;color:var(--purple-light);}
+  .stat-label{font-size:0.8rem;color:var(--text-muted);margin-top:2px;}
+  .stat-new-dot{position:absolute;top:12px;right:12px;width:8px;height:8px;background:var(--danger);border-radius:50%;animation:pulse 1.5s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(1.4);}}
+
+  /* PANELS */
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  /* BOX */
+  .box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.8rem;margin-bottom:1.5rem;}
+  .box-title{font-size:0.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--purple-light);margin-bottom:1.2rem;}
+
+  /* UPLOAD */
+  .upload-zone{border:2px dashed rgba(107,33,168,0.4);border-radius:14px;padding:3rem 2rem;text-align:center;cursor:pointer;transition:border-color 0.2s,background 0.2s;}
+  .upload-zone:hover,.upload-zone.dragover{border-color:var(--purple-light);background:rgba(107,33,168,0.07);}
+  .upload-zone-icon{font-size:2.8rem;margin-bottom:0.75rem;}
+  .upload-zone-text{color:var(--text-muted);font-size:0.92rem;line-height:1.7;}
+  .upload-zone-text strong{color:var(--text);}
+  .upload-progress{display:none;margin-top:1rem;}
+  .upload-progress.show{display:block;}
+  .progress-bar{height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;}
+  .progress-fill{height:100%;width:0%;background:linear-gradient(to right,var(--purple),var(--purple-light));border-radius:3px;transition:width 0.3s;}
+  .progress-label{font-size:0.8rem;color:var(--text-muted);margin-top:6px;}
+
+  /* ADMIN GALLERY GRID */
+  .admin-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:0.75rem;margin-top:1rem;}
+  .admin-thumb{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:3/4;background:rgba(255,255,255,0.04);border:1px solid var(--border);cursor:pointer;transition:transform 0.2s;}
+  .admin-thumb:hover{transform:scale(1.03);}
+  .admin-thumb img,.admin-thumb video{width:100%;height:100%;object-fit:cover;display:block;}
+  .admin-thumb .th-del{position:absolute;top:5px;right:5px;width:24px;height:24px;background:rgba(0,0,0,0.7);border:none;border-radius:50%;color:white;font-size:0.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s,background 0.2s;}
+  .admin-thumb:hover .th-del{opacity:1;}
+  .admin-thumb .th-del:hover{background:var(--danger);}
+  .admin-thumb .th-type{position:absolute;bottom:5px;left:5px;background:rgba(0,0,0,0.6);border-radius:4px;padding:2px 6px;font-size:0.65rem;color:white;}
+  .admin-empty{text-align:center;color:var(--text-muted);padding:2rem;font-size:0.9rem;}
+
+  /* ── BOOKINGS TABLE ── */
+  .booking-table-wrap{overflow-x:auto;}
+  .booking-table{width:100%;border-collapse:collapse;}
+  .booking-table th{font-size:0.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);padding:10px 12px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;}
+  .booking-table td{padding:12px;font-size:0.86rem;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle;}
+  .booking-table tr:last-child td{border-bottom:none;}
+  .booking-table tr:hover td{background:rgba(255,255,255,0.02);}
+  .booking-table tr.booking-new td{background:rgba(107,33,168,0.07);}
+  .status-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;letter-spacing:0.5px;}
+  .status-new{background:rgba(239,68,68,0.2);color:#fca5a5;}
+  .status-confirmed{background:rgba(34,197,94,0.15);color:#86efac;}
+  .status-done{background:rgba(255,255,255,0.1);color:var(--text-muted);}
+  .booking-action-btn{background:none;border:1px solid var(--border);color:var(--text-muted);font-size:0.75rem;padding:4px 10px;border-radius:6px;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+  .booking-action-btn:hover{border-color:var(--purple-light);color:var(--purple-light);}
+  .booking-confirm-btn{background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.3);color:#86efac;}
+  .booking-confirm-btn:hover{background:rgba(34,197,94,0.2);}
+  .del-booking{background:none;border:none;color:rgba(239,68,68,0.5);font-size:0.85rem;cursor:pointer;padding:4px 8px;border-radius:6px;transition:all 0.2s;}
+  .del-booking:hover{color:var(--danger);background:rgba(239,68,68,0.1);}
+  .booking-empty{text-align:center;color:var(--text-muted);padding:2rem;font-size:0.9rem;}
+
+  /* NOTIFICATION TOAST */
+  .notif-toast{position:fixed;top:80px;right:24px;background:rgba(107,33,168,0.2);border:1px solid rgba(107,33,168,0.5);border-radius:12px;padding:14px 20px;color:var(--purple-light);font-size:0.88rem;font-weight:500;z-index:9999;opacity:0;transform:translateX(30px);transition:opacity 0.3s,transform 0.3s;pointer-events:none;max-width:300px;}
+  .notif-toast.show{opacity:1;transform:translateX(0);}
+  .notif-toast .notif-title{font-weight:700;margin-bottom:4px;font-size:0.92rem;}
+  .notif-toast .notif-detail{color:rgba(255,255,255,0.6);font-size:0.82rem;}
+
+  /* USERS */
+  .user-table{width:100%;border-collapse:collapse;}
+  .user-table th{font-size:0.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);padding:10px 12px;border-bottom:1px solid var(--border);text-align:left;}
+  .user-table td{padding:12px;font-size:0.88rem;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle;}
+  .user-table tr:last-child td{border-bottom:none;}
+  .user-table tr:hover td{background:rgba(255,255,255,0.02);}
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;letter-spacing:0.5px;}
+  .badge.admin{background:rgba(107,33,168,0.25);color:var(--purple-light);}
+  .badge.user{background:rgba(34,197,94,0.15);color:#86efac;}
+  .del-user{background:none;border:none;color:rgba(239,68,68,0.6);font-size:0.85rem;cursor:pointer;transition:color 0.2s;padding:4px 8px;border-radius:6px;}
+  .del-user:hover{color:var(--danger);background:rgba(239,68,68,0.1);}
+
+  /* SETTINGS */
+  .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  .sfield{display:flex;flex-direction:column;gap:6px;}
+  .sfield.full{grid-column:span 2;}
+  .sfield label{font-size:0.75rem;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--text-muted);}
+  .sfield input,.sfield textarea{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:white;font-size:0.9rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s;width:100%;}
+  .sfield input:focus,.sfield textarea:focus{border-color:var(--purple-light);}
+  .sfield textarea{resize:vertical;min-height:80px;}
+  .save-btn{margin-top:1rem;padding:12px 28px;background:var(--purple);color:white;border:none;border-radius:8px;font-size:0.9rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background 0.2s;}
+  .save-btn:hover{background:var(--purple-light);}
+
+  /* GENERAL TOAST */
+  .toast{position:fixed;bottom:24px;right:24px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);border-radius:10px;padding:12px 20px;color:#86efac;font-size:0.88rem;font-weight:500;z-index:9999;opacity:0;transform:translateY(10px);transition:opacity 0.3s,transform 0.3s;pointer-events:none;}
+  .toast.show{opacity:1;transform:translateY(0);}
+
+  /* QUICK ACTIONS */
+  .quick-actions{display:flex;gap:1rem;flex-wrap:wrap;}
+  .quick-btn{padding:11px 22px;border:none;border-radius:8px;font-size:0.88rem;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;}
+  .quick-btn.primary{background:var(--purple);color:white;}
+  .quick-btn.primary:hover{background:var(--purple-light);}
+  .quick-btn.secondary{background:rgba(255,255,255,0.07);color:var(--text);border:1px solid var(--border);}
+  .quick-btn.secondary:hover{background:rgba(255,255,255,0.12);}
+
+  @media(max-width:768px){.sidebar{width:200px;}.main{margin-left:200px;padding:1.2rem 1.5rem;}.settings-grid{grid-template-columns:1fr;}.sfield.full{grid-column:span 1;}}
+  @media(max-width:600px){.sidebar{display:none;}.main{margin-left:0;}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-brand-name">Dmark<span>Captures</span></div>
+    <div class="sb-brand-tag">Admin Panel</div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-section-label">Main</div>
+    <button class="sb-link active" onclick="showPanel('dashboard',this)"><span class="icon">📊</span> Dashboard</button>
+    <button class="sb-link" onclick="showPanel('gallery',this)"><span class="icon">🖼️</span> Gallery</button>
+    <button class="sb-link" id="sbBookingsLink" onclick="showPanel('bookings',this)">
+      <span class="icon">📅</span> Bookings
+      <span class="sb-badge" id="sbBookingBadge" style="display:none">0</span>
+    </button>
+    <div class="sb-section-label" style="margin-top:0.5rem">Management</div>
+    <button class="sb-link" onclick="showPanel('users',this)"><span class="icon">👥</span> Users</button>
+    <button class="sb-link" onclick="showPanel('settings',this)"><span class="icon">⚙️</span> Settings</button>
+    <div class="sb-section-label" style="margin-top:0.5rem">Site</div>
+    <a class="sb-link" href="dmark-captures.html" target="_blank"><span class="icon">🌐</span> View Main Site</a>
+  </nav>
+  <div class="sb-bottom">
+    <div class="sb-user-row">
+      <div class="sb-avatar" id="sbAvatar">A</div>
+      <div><div class="sb-user-name" id="sbName">Admin</div><div class="sb-user-role">Administrator</div></div>
+    </div>
+    <button class="sb-logout" onclick="logout()">Sign Out</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- DASHBOARD -->
+  <div class="panel active" id="panel-dashboard">
+    <div class="topbar">
+      <div><div class="page-title">Dashboard</div><div class="page-subtitle">Welcome back! Here's your studio overview.</div></div>
+      <a href="dmark-captures.html" target="_blank" class="view-site-btn">🌐 View Main Site</a>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-icon">🖼️</div><div class="stat-num" id="statImages">0</div><div class="stat-label">Gallery Images</div></div>
+      <div class="stat-card"><div class="stat-icon">🎬</div><div class="stat-num" id="statVideos">0</div><div class="stat-label">Gallery Videos</div></div>
+      <div class="stat-card" id="statBookingsCard"><div class="stat-icon">📅</div><div class="stat-num" id="statBookings">0</div><div class="stat-label">Total Bookings</div></div>
+      <div class="stat-card" id="statNewCard"><div class="stat-icon">🔔</div><div class="stat-num" id="statNew">0</div><div class="stat-label">New Bookings</div></div>
+      <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-num" id="statUsers">0</div><div class="stat-label">Registered Users</div></div>
+    </div>
+    <div class="box">
+      <div class="box-title">Quick Actions</div>
+      <div class="quick-actions">
+        <button class="quick-btn primary" onclick="showPanel('gallery',document.querySelectorAll('.sb-link')[1])">📁 Upload Media</button>
+        <button class="quick-btn secondary" onclick="showPanel('bookings',document.getElementById('sbBookingsLink'))">📅 View Bookings</button>
+        <button class="quick-btn secondary" onclick="showPanel('users',document.querySelectorAll('.sb-link')[4])">👥 Manage Users</button>
+      </div>
+    </div>
+    <!-- Recent bookings preview -->
+    <div class="box">
+      <div class="box-title">Recent Bookings</div>
+      <div id="dashRecentBookings"></div>
+    </div>
+  </div>
+
+  <!-- GALLERY -->
+  <div class="panel" id="panel-gallery">
+    <div class="topbar">
+      <div><div class="page-title">Gallery Manager</div><div class="page-subtitle">Upload media — it appears instantly on the main site.</div></div>
+      <a href="dmark-captures.html#gallery" target="_blank" class="view-site-btn">🔗 See on Site</a>
+    </div>
+    <div class="box">
+      <div class="box-title">Upload New Media</div>
+      <div class="upload-zone" id="uploadZone"
+           onclick="document.getElementById('adminFileInput').click()"
+           ondragover="event.preventDefault();this.classList.add('dragover')"
+           ondragleave="this.classList.remove('dragover')"
+           ondrop="handleDrop(event)">
+        <div class="upload-zone-icon">📤</div>
+        <div class="upload-zone-text"><strong>Click to browse</strong> or drag & drop here<br>Supports: JPG, PNG, GIF, WEBP, MP4, MOV, WEBM</div>
+      </div>
+      <input type="file" id="adminFileInput" accept="image/*,video/*" multiple style="display:none" onchange="handleFileSelect(this.files)">
+      <div class="upload-progress" id="uploadProgress">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-label" id="progressLabel">Uploading…</div>
+      </div>
+    </div>
+    <div class="box">
+      <div class="box-title">Gallery <span id="galleryCountLabel" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted);font-size:0.78rem"></span></div>
+      <div class="admin-gallery" id="adminGalleryGrid"></div>
+    </div>
+  </div>
+
+  <!-- BOOKINGS -->
+  <div class="panel" id="panel-bookings">
+    <div class="topbar">
+      <div><div class="page-title">Bookings</div><div class="page-subtitle">All slot booking requests from the main site.</div></div>
+      <button class="view-site-btn" onclick="clearNewBookings()" style="cursor:pointer;border:none;">✅ Mark All Read</button>
+    </div>
+    <div class="box">
+      <div class="box-title">All Booking Requests <span id="bookingCountLabel" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted);font-size:0.78rem"></span></div>
+      <div class="booking-table-wrap">
+        <table class="booking-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Name</th><th>Phone</th><th>Service</th>
+              <th>Date</th><th>Time</th><th>Venue</th><th>Location</th>
+              <th>Status</th><th>Received</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="bookingsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- USERS -->
+  <div class="panel" id="panel-users">
+    <div class="topbar"><div><div class="page-title">Users</div><div class="page-subtitle">Registered accounts stored in browser localStorage.</div></div></div>
+    <div class="box">
+      <div class="box-title">Registered Users</div>
+      <div style="overflow-x:auto"><table class="user-table" id="usersTable"><thead><tr><th>#</th><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Action</th></tr></thead><tbody id="usersBody"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="panel" id="panel-settings">
+    <div class="topbar"><div><div class="page-title">Settings</div><div class="page-subtitle">Update site information and admin credentials.</div></div></div>
+    <div class="box">
+      <div class="box-title">Site Info</div>
+      <div class="settings-grid">
+        <div class="sfield"><label>Studio Name</label><input type="text" id="settingName" value="Dmark Captures"></div>
+        <div class="sfield"><label>Phone Number</label><input type="tel" id="settingPhone" placeholder="+91 99999 99999"></div>
+        <div class="sfield"><label>Email</label><input type="email" id="settingEmail" placeholder="hello@dmarkcaptures.com"></div>
+        <div class="sfield"><label>Location</label><input type="text" id="settingLocation" placeholder="Hyderabad, Telangana"></div>
+        <div class="sfield full"><label>About / Bio</label><textarea id="settingBio" placeholder="Short description about your studio…"></textarea></div>
+      </div>
+      <button class="save-btn" onclick="saveSettings()">💾 Save Settings</button>
+    </div>
+    <div class="box">
+      <div class="box-title">Change Admin Password</div>
+      <div class="settings-grid">
+        <div class="sfield"><label>Current Password</label><input type="password" id="curPwd" placeholder="Current password"></div>
+        <div class="sfield"><label>New Password</label><input type="password" id="newPwd" placeholder="Min 8 characters"></div>
+      </div>
+      <button class="save-btn" onclick="changeAdminPwd()">🔑 Update Password</button>
+    </div>
+  </div>
+
+</main>
+
+<!-- NOTIFICATION TOAST -->
+<div class="notif-toast" id="notifToast">
+  <div class="notif-title" id="notifTitle"></div>
+  <div class="notif-detail" id="notifDetail"></div>
+</div>
+
+<!-- GENERAL TOAST -->
+<div class="toast" id="adminToast"></div>
+
+<script>
+// ── AUTH ──
+(function(){
+  const user = JSON.parse(sessionStorage.getItem('dmCurrentUser')||'null');
+  if(user){
+    document.getElementById('sbName').textContent = user.name||'Admin';
+    document.getElementById('sbAvatar').textContent = (user.name||'A')[0].toUpperCase();
+  }
+})();
+
+// ── PANEL ──
+function showPanel(id, triggerEl){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  document.querySelectorAll('.sb-link').forEach(l=>l.classList.remove('active'));
+  if(triggerEl) triggerEl.classList.add('active');
+  if(id==='gallery')   renderAdminGallery();
+  if(id==='users')     renderUsers();
+  if(id==='dashboard') { updateStats(); renderDashRecent(); }
+  if(id==='settings')  loadSettings();
+  if(id==='bookings')  renderBookings();
+}
+
+// ── TOAST ──
+function showToast(msg, type){
+  const t = document.getElementById('adminToast');
+  t.textContent = msg;
+  t.style.background = type==='err' ? 'rgba(239,68,68,0.15)' : 'rgba(34,197,94,0.15)';
+  t.style.borderColor = type==='err' ? 'rgba(239,68,68,0.3)' : 'rgba(34,197,94,0.3)';
+  t.style.color = type==='err' ? '#fca5a5' : '#86efac';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function showNotif(title, detail){
+  const t=document.getElementById('notifToast');
+  document.getElementById('notifTitle').textContent=title;
+  document.getElementById('notifDetail').textContent=detail;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),5000);
+}
+
+// ── GALLERY ──
+function getGalleryItems(){ return JSON.parse(localStorage.getItem('dmGallery')||'[]'); }
+function saveGalleryItems(items){ localStorage.setItem('dmGallery',JSON.stringify(items)); }
+
+function handleFileSelect(files){
+  const arr=Array.from(files); if(!arr.length) return;
+  const progress=document.getElementById('uploadProgress');
+  const fill=document.getElementById('progressFill');
+  const label=document.getElementById('progressLabel');
+  progress.classList.add('show');
+  let done=0; const total=arr.length;
+  arr.forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=function(e){
+      const items=getGalleryItems();
+      items.push({id:Date.now()+Math.random(),name:file.name,type:file.type.startsWith('video/')?'video':'image',src:e.target.result,addedAt:new Date().toISOString()});
+      saveGalleryItems(items);
+      done++;
+      const pct=Math.round((done/total)*100);
+      fill.style.width=pct+'%';
+      label.textContent=`Uploaded ${done} of ${total}…`;
+      if(done===total){
+        label.textContent=`✅ ${done} file(s) uploaded! They're now live on the main site.`;
+        setTimeout(()=>progress.classList.remove('show'),3000);
+        renderAdminGallery(); updateStats();
+        showToast(`✅ ${done} file(s) added — now visible on main site!`);
+        document.getElementById('adminFileInput').value='';
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function handleDrop(e){
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('dragover');
+  handleFileSelect(e.dataTransfer.files);
+}
+
+function renderAdminGallery(){
+  const grid=document.getElementById('adminGalleryGrid');
+  const label=document.getElementById('galleryCountLabel');
+  const items=getGalleryItems();
+  label.textContent=`— ${items.length} item(s)`;
+  if(!items.length){grid.innerHTML='<div class="admin-empty">No media yet. Upload some above! ☝️</div>';return;}
+  grid.innerHTML=items.map((item,idx)=>`
+    <div class="admin-thumb">
+      ${item.type==='image'?`<img src="${item.src}" alt="${item.name}" loading="lazy">`:`<video src="${item.src}" muted preload="metadata"></video>`}
+      <span class="th-type">${item.type==='video'?'🎬':'🖼️'}</span>
+      <button class="th-del" onclick="deleteGalleryItem(${idx})" title="Delete">✕</button>
+    </div>`).join('');
+}
+
+function deleteGalleryItem(idx){
+  if(!confirm('Remove this item from the gallery?')) return;
+  const items=getGalleryItems(); items.splice(idx,1); saveGalleryItems(items);
+  renderAdminGallery(); updateStats(); showToast('🗑️ Item removed.');
+}
+
+// ── BOOKINGS ──
+function getBookings(){ return JSON.parse(localStorage.getItem('dmBookings')||'[]'); }
+function saveBookings(b){ localStorage.setItem('dmBookings',JSON.stringify(b)); }
+
+function countNewBookings(){
+  return getBookings().filter(b=>b.status==='New').length;
+}
+
+function updateBookingBadge(){
+  const count = countNewBookings();
+  const badge = document.getElementById('sbBookingBadge');
+  const card  = document.getElementById('statNewCard');
+  document.getElementById('statNew').textContent = count;
+  if(count>0){
+    badge.textContent=count; badge.style.display='block';
+    card.classList.add('new-alert');
+    card.querySelector('.stat-icon').textContent='🔔';
+    if(!card.querySelector('.stat-new-dot')){
+      const dot=document.createElement('div'); dot.className='stat-new-dot'; card.appendChild(dot);
+    }
+  } else {
+    badge.style.display='none';
+    card.classList.remove('new-alert');
+    card.querySelector('.stat-icon').textContent='🔔';
+    const dot=card.querySelector('.stat-new-dot'); if(dot) dot.remove();
+  }
+}
+
+function renderBookings(){
+  const tbody=document.getElementById('bookingsBody');
+  const label=document.getElementById('bookingCountLabel');
+  const bookings=getBookings();
+  label.textContent=`— ${bookings.length} request(s)`;
+  if(!bookings.length){
+    tbody.innerHTML='<tr><td colspan="11" class="booking-empty">No bookings yet. They\'ll appear here when clients book from the main site. 📅</td></tr>';
+    return;
+  }
+  tbody.innerHTML=bookings.map((b,i)=>`
+    <tr class="${b.status==='New'?'booking-new':''}">
+      <td style="color:var(--text-muted)">${bookings.length-i}</td>
+      <td style="font-weight:600">${b.name}</td>
+      <td style="color:var(--text-muted)"><a href="tel:${b.phone}" style="color:var(--purple-light);text-decoration:none">${b.phone}</a></td>
+      <td><span style="color:white">${b.service||'—'}</span></td>
+      <td style="color:var(--text-muted)">${b.date||'—'}</td>
+      <td style="color:var(--text-muted)">${b.time||'—'}</td>
+      <td style="color:var(--text-muted);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${b.venue||''}">${b.venue||'—'}</td>
+      <td style="color:var(--text-muted)">${b.locationType||'—'}</td>
+      <td><span class="status-badge ${b.status==='New'?'status-new':b.status==='Confirmed'?'status-confirmed':'status-done'}">${b.status}</span></td>
+      <td style="color:var(--text-muted);font-size:0.78rem">${b.createdAt?new Date(b.createdAt).toLocaleString('en-IN',{dateStyle:'short',timeStyle:'short'}):'—'}</td>
+      <td style="display:flex;gap:6px;align-items:center">
+        ${b.status==='New'?`<button class="booking-action-btn booking-confirm-btn" onclick="confirmBooking(${i})">✅ Confirm</button>`:''}
+        ${b.status==='Confirmed'?`<button class="booking-action-btn" onclick="markDone(${i})">✔ Done</button>`:''}
+        <button class="del-booking" onclick="deleteBooking(${i})">🗑️</button>
+      </td>
+    </tr>`).join('');
+}
+
+function confirmBooking(idx){
+  const b=getBookings(); b[idx].status='Confirmed'; saveBookings(b);
+  renderBookings(); updateStats(); updateBookingBadge();
+  showToast('✅ Booking confirmed!');
+}
+function markDone(idx){
+  const b=getBookings(); b[idx].status='Done'; saveBookings(b);
+  renderBookings(); updateStats(); updateBookingBadge();
+  showToast('✔ Marked as done.');
+}
+function deleteBooking(idx){
+  if(!confirm('Delete this booking?')) return;
+  const b=getBookings(); b.splice(idx,1); saveBookings(b);
+  renderBookings(); updateStats(); updateBookingBadge();
+  showToast('🗑️ Booking removed.');
+}
+function clearNewBookings(){
+  const b=getBookings();
+  b.forEach(bk=>{ if(bk.status==='New') bk.status='Confirmed'; });
+  saveBookings(b); renderBookings(); updateStats(); updateBookingBadge();
+  showToast('✅ All bookings marked as confirmed.');
+}
+
+function renderDashRecent(){
+  const el=document.getElementById('dashRecentBookings');
+  const bookings=getBookings().slice(0,5);
+  if(!bookings.length){el.innerHTML='<div style="color:var(--text-muted);text-align:center;padding:1.5rem">No bookings yet.</div>';return;}
+  el.innerHTML=`<div style="overflow-x:auto"><table class="booking-table">
+    <thead><tr><th>Name</th><th>Service</th><th>Date</th><th>Status</th></tr></thead>
+    <tbody>${bookings.map(b=>`<tr>
+      <td style="font-weight:600">${b.name}</td>
+      <td style="color:var(--text-muted)">${b.service||'—'}</td>
+      <td style="color:var(--text-muted)">${b.date||'—'}</td>
+      <td><span class="status-badge ${b.status==='New'?'status-new':b.status==='Confirmed'?'status-confirmed':'status-done'}">${b.status}</span></td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+// ── USERS ──
+function renderUsers(){
+  const tbody=document.getElementById('usersBody');
+  const users=JSON.parse(localStorage.getItem('dmUsers')||'[]');
+  if(!users.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:1.5rem">No registered users yet.</td></tr>';return;}
+  tbody.innerHTML=users.map((u,i)=>`
+    <tr>
+      <td style="color:var(--text-muted)">${i+1}</td>
+      <td style="font-weight:600">${u.name}</td>
+      <td style="color:var(--text-muted)">${u.email}</td>
+      <td><span class="badge ${u.role}">${u.role}</span></td>
+      <td style="color:var(--text-muted);font-size:0.82rem">${u.createdAt?new Date(u.createdAt).toLocaleDateString():'—'}</td>
+      <td>${u.role!=='admin'?`<button class="del-user" onclick="deleteUser(${i})">🗑️ Remove</button>`:'<span style="color:var(--text-muted);font-size:0.8rem">—</span>'}</td>
+    </tr>`).join('');
+}
+
+function deleteUser(idx){
+  if(!confirm('Delete this user?')) return;
+  const users=JSON.parse(localStorage.getItem('dmUsers')||'[]');
+  users.splice(idx,1); localStorage.setItem('dmUsers',JSON.stringify(users));
+  renderUsers(); updateStats(); showToast('👤 User removed.');
+}
+
+// ── STATS ──
+function updateStats(){
+  const items=getGalleryItems();
+  document.getElementById('statImages').textContent=items.filter(i=>i.type==='image').length;
+  document.getElementById('statVideos').textContent=items.filter(i=>i.type==='video').length;
+  const users=JSON.parse(localStorage.getItem('dmUsers')||'[]');
+  document.getElementById('statUsers').textContent=users.length;
+  const bookings=getBookings();
+  document.getElementById('statBookings').textContent=bookings.length;
+  updateBookingBadge();
+}
+
+// ── SETTINGS ──
+function loadSettings(){
+  const s=JSON.parse(localStorage.getItem('dmSettings')||'{}');
+  if(s.name)     document.getElementById('settingName').value=s.name;
+  if(s.phone)    document.getElementById('settingPhone').value=s.phone;
+  if(s.email)    document.getElementById('settingEmail').value=s.email;
+  if(s.location) document.getElementById('settingLocation').value=s.location;
+  if(s.bio)      document.getElementById('settingBio').value=s.bio;
+}
+function saveSettings(){
+  const s={name:document.getElementById('settingName').value,phone:document.getElementById('settingPhone').value,email:document.getElementById('settingEmail').value,location:document.getElementById('settingLocation').value,bio:document.getElementById('settingBio').value};
+  localStorage.setItem('dmSettings',JSON.stringify(s)); showToast('✅ Settings saved!');
+}
+function changeAdminPwd(){
+  const cur=document.getElementById('curPwd').value;
+  const nw=document.getElementById('newPwd').value;
+  const users=JSON.parse(localStorage.getItem('dmUsers')||'[]');
+  const idx=users.findIndex(u=>u.email==='admin@dmarkcaptures.com');
+  if(idx===-1){showToast('Admin not found.','err');return;}
+  if(users[idx].pwd!==cur){showToast('❌ Current password is wrong.','err');return;}
+  if(nw.length<8){showToast('❌ New password too short.','err');return;}
+  users[idx].pwd=nw; localStorage.setItem('dmUsers',JSON.stringify(users));
+  document.getElementById('curPwd').value=''; document.getElementById('newPwd').value='';
+  showToast('🔑 Password updated!');
+}
+
+// ── LOGOUT ──
+function logout(){ sessionStorage.removeItem('dmCurrentUser'); window.location.href='dmark-captures.html'; }
+
+// ── REAL-TIME: listen for new bookings from main site ──
+let lastBookingCount = getBookings().length;
+window.addEventListener('storage', function(e){
+  if(e.key==='dmBookings'){
+    const newBookings = JSON.parse(e.newValue||'[]');
+    const newCount = newBookings.length;
+    if(newCount > lastBookingCount){
+      const latest = newBookings[0];
+      showNotif(`📅 New Booking from ${latest.name}!`, `${latest.service} • ${latest.date}`);
+      lastBookingCount = newCount;
+    }
+    updateStats();
+    renderBookings();
+    renderDashRecent();
+  }
+});
+
+// ── INIT ──
+updateStats();
+renderDashRecent();
+</script>
+</body>
+</html>
