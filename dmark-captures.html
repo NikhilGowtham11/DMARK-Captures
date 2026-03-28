@@ -37,7 +37,12 @@
     display:flex; flex-direction:column; line-height:1.2;
   }
   .nav-logo span { color:var(--faded); font-size:0.75rem; font-weight:400; letter-spacing:2px; }
-  .nav-links { display:flex; gap:2.5rem; list-style:none; }
+  .nav-links {
+  display:flex;
+  gap:2.5rem;
+  list-style:none;
+  margin: 0 auto; 
+}
   .nav-links a {
     text-decoration:none; color:rgba(255,255,255,0.75);
     font-size:0.9rem; font-weight:500; letter-spacing:0.5px;
@@ -562,7 +567,7 @@
   /* RESPONSIVE */
   @media(max-width:768px){
     .nav-links{display:none;} .hamburger{display:flex;}
-    .nav-links.open{display:flex;flex-direction:column;position:absolute;top:68px;left:0;right:0;background:var(--black);padding:1.5rem 5%;gap:1rem;border-top:1px solid rgba(107,33,168,0.2);}
+    .nav-links.open{display:flex;flex-direction:column;position:absolute;top:68px;transform:none;left:0;right:0;background:var(--black);padding:1.5rem 5%;gap:1rem;border-top:1px solid rgba(107,33,168,0.2);}
     .about-grid{grid-template-columns:1fr;} .about-visual{display:none;}
     .footer-top{grid-template-columns:1fr 1fr;}
     .form-grid{grid-template-columns:1fr;} .form-group.full{grid-column:span 1;}
@@ -651,18 +656,25 @@
 </style>
 </head>
 <body>
+  
 
 <!-- NAVBAR -->
 <nav id="navbar">
   <a href="#home" class="nav-logo">Dmark<span>Captures</span></a>
-  <ul class="nav-links" id="navLinks">
-    <li><a href="#home">Home</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#services">Services</a></li>
-    <li><a href="#gallery">Works</a></li>
-    <li><a href="#clients">Clients</a></li>
-    <li><a href="#booking" class="nav-book">Book Slot</a></li>
-  </ul>
+  <ul class="nav-links">
+  <li><a href="#home">Home</a></li>
+  <li><a href="#about">About</a></li>
+  <li><a href="#services">Services</a></li>
+  <li><a href="#gallery">Works</a></li>
+  <li><a href="#clients">Clients</a></li>
+  <li><a href="login.html">Login</a></li>
+  
+</ul>
+ <a href="#booking" class="nav-book">Book Slot</a>
+
+  <div class="hamburger" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </div>
   <div class="hamburger" onclick="toggleNav()"><span></span><span></span><span></span></div>
 </nav>
 
