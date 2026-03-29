@@ -852,16 +852,9 @@
   @keyframes angle { 0%{transform:rotate(0deg);box-shadow:0px 30px 50px -20px rgba(0,0,0,.7);} 25%{transform:rotate(2deg);box-shadow:10px 30px 50px -20px rgba(0,0,0,.7);} 75%{transform:rotate(-2deg);box-shadow:-10px 30px 50px -20px rgba(0,0,0,.7);} 100%{transform:rotate(0deg);box-shadow:0px 30px 50px -20px rgba(0,0,0,.7);} }
 
   /* ═══ RESPONSIVE ═══ */
-  @media(max-width:900px){
+ @media(max-width:900px){
     .booking-layout { grid-template-columns:1fr; }
-    /* Move booking camera to background on mobile instead of hiding */
-    .booking-cam-col { 
-      position:absolute; 
-      inset:0; 
-      z-index:0; 
-      opacity:0.08; 
-      pointer-events:none; 
-      display:flex;
+    
     }
     .booking-cam-col::before { opacity:0.3; }
     .booking-form { position:relative; z-index:1; }
