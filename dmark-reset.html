@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dmark Captures | Reset Password</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black:   #0a0a0a;
+    --purple:  #6b21a8;
+    --purple-l:#a855f7;
+    --gold:    #d4a853;
+    --gray:    #6b7280;
+    --border:  #e5e7eb;
+    --bg:      #f9fafb;
+    --error:   #ef4444;
+    --ok:      #16a34a;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:white; min-height:100vh; display:grid; grid-template-columns:1fr 1fr; }
+
+  /* LEFT */
+  .left { background:var(--black); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:3rem 2.5rem; position:relative; overflow:hidden; }
+  .left::before { content:''; position:absolute; width:420px; height:420px; background:radial-gradient(circle,rgba(107,33,168,0.45) 0%,transparent 65%); top:-80px; left:-80px; pointer-events:none; }
+  .left::after { content:''; position:absolute; width:300px; height:300px; background:radial-gradient(circle,rgba(212,168,83,0.12) 0%,transparent 65%); bottom:-60px; right:-40px; pointer-events:none; }
+  .left-inner { position:relative; z-index:1; text-align:center; }
+
+  .cam { width:100px; height:76px; position:relative; margin:0 auto 1.8rem; filter:drop-shadow(0 0 18px rgba(168,85,247,0.55)); }
+  .cam-top { width:60px; height:16px; background:linear-gradient(135deg,#2a2a2a,#1a1a1a); border:2px solid rgba(168,85,247,0.35); border-radius:6px 6px 0 0; position:absolute; top:0; right:8px; }
+  .cam-body { width:100px; height:58px; background:linear-gradient(135deg,#282828,#181818); border:2px solid rgba(168,85,247,0.4); border-radius:8px 8px 6px 6px; position:absolute; bottom:0; display:flex; align-items:center; justify-content:center; }
+  .cam-lens { width:38px; height:38px; border-radius:50%; background:radial-gradient(circle at 35% 35%,#3a3a3a 0%,#1a1a1a 40%,#000 60%,rgba(168,85,247,0.25) 85%,transparent 100%); border:3px solid #444; box-shadow:0 0 0 2px #2a2a2a,0 0 10px rgba(168,85,247,0.5); }
+  .cam-flash { width:15px; height:11px; border-radius:3px; background:rgba(168,85,247,0.25); border:1px solid rgba(168,85,247,0.45); position:absolute; top:14px; left:8px; animation:fl 3s ease-in-out infinite; }
+  @keyframes fl { 0%,90%,100%{background:rgba(168,85,247,0.2);box-shadow:none;} 93%{background:rgba(255,255,255,0.9);box-shadow:0 0 10px #fff;} }
+
+  .brand { font-family:'Playfair Display',serif; font-size:2rem; font-weight:900; color:white; margin-bottom:.4rem; }
+  .brand span { color:var(--purple-l); }
+  .tagline { color:rgba(255,255,255,0.42); font-size:.86rem; line-height:1.7; max-width:270px; margin:0 auto 2.2rem; }
+
+  /* Steps on left */
+  .steps-info { text-align:left; margin-top:.5rem; }
+  .step-item { display:flex; align-items:center; gap:12px; margin-bottom:1rem; }
+  .step-num { width:32px; height:32px; border-radius:50%; background:rgba(168,85,247,0.2); border:1.5px solid rgba(168,85,247,0.4); display:flex; align-items:center; justify-content:center; font-size:.78rem; font-weight:700; color:var(--purple-l); flex-shrink:0; }
+  .step-num.done { background:var(--purple); border-color:var(--purple); color:white; }
+  .step-num.active { background:rgba(168,85,247,0.35); border-color:var(--purple-l); color:white; box-shadow:0 0 12px rgba(168,85,247,0.4); }
+  .step-text { color:rgba(255,255,255,0.4); font-size:.82rem; line-height:1.4; }
+  .step-text.active { color:rgba(255,255,255,0.85); }
+  .step-title { font-weight:700; display:block; }
+  .step-subdesc { font-size:.74rem; color:rgba(255,255,255,0.28); display:block; }
+  .step-text.active .step-subdesc { color:rgba(255,255,255,0.48); }
+
+  /* RIGHT */
+  .right { background:white; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:3rem 2.5rem; overflow-y:auto; }
+  .form-wrap { width:100%; max-width:390px; }
+
+  .back { display:inline-flex; align-items:center; gap:6px; color:var(--gray); font-size:.82rem; text-decoration:none; margin-bottom:1.8rem; transition:color .2s; }
+  .back:hover { color:var(--purple); }
+
+  /* Progress bar */
+  .progress-bar { height:3px; background:var(--border); border-radius:2px; margin-bottom:2rem; overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,var(--purple),var(--purple-l)); border-radius:2px; transition:width .5s ease; }
+
+  .panel { display:none; animation:fadeIn .3s ease; }
+  .panel.active { display:block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+  .h1 { font-family:'Playfair Display',serif; font-size:1.65rem; font-weight:900; color:var(--black); margin-bottom:.3rem; }
+  .sub { color:var(--gray); font-size:.875rem; margin-bottom:1.6rem; line-height:1.5; }
+
+  .toast { display:none; padding:11px 14px; border-radius:9px; font-size:.86rem; font-weight:500; margin-bottom:1rem; text-align:center; }
+  .toast.ok  { display:block; background:#f0fdf4; border:1px solid #bbf7d0; color:var(--ok); }
+  .toast.bad { display:block; background:#fef2f2; border:1px solid #fecaca; color:var(--error); }
+
+  /* Expired / invalid token notice */
+  .token-warn { background:#fef3c7; border:1.5px solid #fcd34d; border-radius:10px; padding:14px 16px; margin-bottom:1.4rem; display:flex; align-items:flex-start; gap:10px; }
+  .token-warn-icon { font-size:1.1rem; flex-shrink:0; margin-top:1px; }
+  .token-warn-text { font-size:.83rem; color:#92400e; line-height:1.5; }
+  .token-warn-text strong { display:block; margin-bottom:2px; font-size:.86rem; }
+
+  .field { display:flex; flex-direction:column; gap:5px; margin-bottom:1rem; }
+  .field label { font-size:.77rem; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--black); }
+  .field input { background:white; border:1.5px solid var(--border); border-radius:8px; padding:11px 15px; color:var(--black); font-size:.95rem; font-family:'DM Sans',sans-serif; outline:none; transition:border-color .2s,box-shadow .2s; width:100%; }
+  .field input:focus { border-color:var(--purple); box-shadow:0 0 0 3px rgba(107,33,168,0.1); }
+  .field input.err { border-color:var(--error); }
+  .ferr { font-size:.75rem; color:var(--error); display:none; }
+  .ferr.show { display:block; }
+
+  .pw-wrap { position:relative; }
+  .pw-wrap input { padding-right:42px; }
+  .eye { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--gray); cursor:pointer; font-size:.92rem; padding:0; transition:color .2s; }
+  .eye:hover { color:var(--purple); }
+
+  .str { margin-top:4px; }
+  .str-bar { height:3px; background:var(--border); border-radius:2px; overflow:hidden; }
+  .str-fill { height:100%; width:0%; border-radius:2px; transition:width .3s,background .3s; }
+  .str-lbl { font-size:.7rem; color:var(--gray); margin-top:3px; }
+
+  .btn { width:100%; padding:13px; background:var(--black); color:white; border:none; border-radius:8px; font-size:.95rem; font-weight:700; font-family:'DM Sans',sans-serif; cursor:pointer; transition:background .2s,transform .15s; margin-top:.3rem; }
+  .btn:hover { background:var(--purple); transform:translateY(-1px); }
+
+  .note { text-align:center; margin-top:1.3rem; font-size:.8rem; color:var(--gray); }
+  .note a { color:var(--purple); text-decoration:none; font-weight:600; }
+  .note a:hover { text-decoration:underline; }
+
+  /* Success */
+  .success-wrap { text-align:center; padding:1rem 0; }
+  .success-icon { width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,var(--purple),var(--purple-l)); display:flex; align-items:center; justify-content:center; font-size:1.9rem; margin:0 auto 1.3rem; box-shadow:0 8px 28px rgba(107,33,168,0.3); animation:popIn .45s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+
+  .right::before { content:''; display:block; position:fixed; top:0; right:0; width:50%; height:3px; background:linear-gradient(90deg,var(--purple),var(--purple-l),var(--gold)); }
+
+  @media(max-width:700px){
+    body{grid-template-columns:1fr;}
+    .left{display:none;}
+    .right::before{width:100%;}
+    .right{padding:2rem 1.5rem;justify-content:flex-start;padding-top:3rem;}
+  }
+</style>
+</head>
+<body>
+
+<!-- LEFT -->
+<div class="left">
+  <div class="left-inner">
+    <div class="cam">
+      <div class="cam-top"></div>
+      <div class="cam-body"><div class="cam-lens"></div></div>
+      <div class="cam-flash"></div>
+    </div>
+    <div class="brand">Dmark<span>Captures</span></div>
+    <p class="tagline">Secure your account in just one step.</p>
+
+    <div class="steps-info">
+      <div class="step-item">
+        <div class="step-num done">✓</div>
+        <div class="step-text active">
+          <span class="step-title">Email verified</span>
+          <span class="step-subdesc">Your account was found</span>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num done">✓</div>
+        <div class="step-text active">
+          <span class="step-title">Reset mail sent</span>
+          <span class="step-subdesc">Link delivered to inbox</span>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num active" id="sNum3">3</div>
+        <div class="step-text active" id="sTxt3">
+          <span class="step-title">Set new password</span>
+          <span class="step-subdesc">Choose a strong password</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT -->
+<div class="right">
+  <div class="form-wrap">
+
+    <a href="login.html" class="back">← Back to Login</a>
+
+    <!-- Progress bar — step 3 of 3 -->
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width:66%"></div>
+    </div>
+
+    <!-- PANEL: Set New Password -->
+    <div class="panel active" id="pReset">
+      <div class="h1">Set new password 🛡️</div>
+      <div class="sub">Choose a strong new password for your account.</div>
+
+      <!-- Token expired warning (shown if token missing/expired) -->
+      <div class="token-warn" id="tokenWarn" style="display:none">
+        <span class="token-warn-icon">⚠️</span>
+        <div class="token-warn-text">
+          <strong>Reset link expired or invalid</strong>
+          This page can only be accessed from a valid reset link. Please go back and request a new one.
+        </div>
+      </div>
+
+      <div class="toast" id="tReset_msg"></div>
+
+      <div id="resetForm">
+        <div class="field">
+          <label>New Password</label>
+          <div class="pw-wrap">
+            <input type="password" id="np1" placeholder="Min 8 characters" oninput="strength(this.value)">
+            <button class="eye" type="button" onclick="togglePw('np1',this)">👁</button>
+          </div>
+          <div class="str">
+            <div class="str-bar"><div class="str-fill" id="npFill"></div></div>
+            <div class="str-lbl" id="npLbl">Enter a password</div>
+          </div>
+          <span class="ferr" id="np1Err">Min 8 characters required.</span>
+        </div>
+
+        <div class="field">
+          <label>Confirm New Password</label>
+          <div class="pw-wrap">
+            <input type="password" id="np2" placeholder="Repeat new password">
+            <button class="eye" type="button" onclick="togglePw('np2',this)">👁</button>
+          </div>
+          <span class="ferr" id="np2Err">Passwords don't match.</span>
+        </div>
+
+        <button class="btn" onclick="updatePassword()">Update Password →</button>
+      </div>
+
+      <div class="note">Remember your password? <a href="login.html">Sign in</a></div>
+    </div>
+
+    <!-- PANEL: Success -->
+    <div class="panel" id="pSuccess">
+      <div class="success-wrap">
+        <div class="success-icon">✓</div>
+        <div class="h1" style="text-align:center">Password updated! 🎉</div>
+        <div class="sub" style="text-align:center;margin-top:.5rem">Your password has been changed successfully.<br>You can now sign in with your new password.</div>
+        <button class="btn" style="margin-top:1.5rem" onclick="window.location.href='login.html'">Go to Login →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Check if valid reset token exists
+  window.addEventListener('DOMContentLoaded', () => {
+    const raw = localStorage.getItem('dmResetToken');
+    if (!raw) {
+      showExpired(); return;
+    }
+    try {
+      const { email, exp } = JSON.parse(raw);
+      if (!email || Date.now() > exp) {
+        showExpired(); return;
+      }
+    } catch(e) {
+      showExpired();
+    }
+  });
+
+  function showExpired() {
+    document.getElementById('tokenWarn').style.display = 'flex';
+    document.getElementById('resetForm').style.display = 'none';
+  }
+
+  function togglePw(id, btn) {
+    const i = document.getElementById(id);
+    const s = i.type === 'password';
+    i.type = s ? 'text' : 'password';
+    btn.textContent = s ? '🙈' : '👁';
+  }
+
+  function strength(v) {
+    let s = 0;
+    if (v.length >= 8) s++;
+    if (/[A-Z]/.test(v)) s++;
+    if (/[0-9]/.test(v)) s++;
+    if (/[^A-Za-z0-9]/.test(v)) s++;
+    const m = [
+      { w:'0%',   c:'transparent', t:'Enter a password' },
+      { w:'25%',  c:'#ef4444',     t:'Weak' },
+      { w:'50%',  c:'#f97316',     t:'Fair' },
+      { w:'75%',  c:'#eab308',     t:'Good' },
+      { w:'100%', c:'#16a34a',     t:'Strong 💪' },
+    ][s];
+    document.getElementById('npFill').style.cssText = `width:${m.w};background:${m.c}`;
+    const lbl = document.getElementById('npLbl');
+    lbl.textContent = m.t;
+    lbl.style.color = m.c === 'transparent' ? '#9ca3af' : m.c;
+  }
+
+  function setErr(iId, eId, msg) {
+    const inp = document.getElementById(iId);
+    if (inp) inp.classList.add('err');
+    const e = document.getElementById(eId);
+    if (msg) e.textContent = msg;
+    e.classList.add('show');
+  }
+
+  function clearAll() {
+    document.querySelectorAll('input.err').forEach(e => e.classList.remove('err'));
+    document.querySelectorAll('.ferr').forEach(e => e.classList.remove('show'));
+    document.querySelectorAll('.toast').forEach(t => { t.className = 'toast'; t.textContent = ''; });
+  }
+
+  function updatePassword() {
+    clearAll();
+    const pwd  = document.getElementById('np1').value;
+    const pwd2 = document.getElementById('np2').value;
+    let ok = true;
+    if (pwd.length < 8) { setErr('np1', 'np1Err', 'Min 8 characters required.'); ok = false; }
+    if (pwd !== pwd2)   { setErr('np2', 'np2Err', "Passwords don't match."); ok = false; }
+    if (!ok) return;
+
+    // Get email from stored token
+    const raw = localStorage.getItem('dmResetToken');
+    if (!raw) { showExpired(); return; }
+    const { email, exp } = JSON.parse(raw);
+    if (Date.now() > exp) { showExpired(); return; }
+
+    // Update password
+    const users = JSON.parse(localStorage.getItem('dmUsers') || '[]');
+    const idx = users.findIndex(u => u.email === email);
+    if (idx !== -1) {
+      users[idx].pwd = pwd;
+      localStorage.setItem('dmUsers', JSON.stringify(users));
+    }
+
+    // Clear the token so this link can't be reused
+    localStorage.removeItem('dmResetToken');
+
+    // Update progress and show success
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('sNum3').className = 'step-num done';
+    document.getElementById('sNum3').textContent = '✓';
+
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('pSuccess').classList.add('active');
+  }
+</script>
+</body>
+</html>
