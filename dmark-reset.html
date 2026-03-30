@@ -207,6 +207,7 @@
         </div>
 
         <button class="btn" onclick="updatePassword()">Update Password →</button>
+        
       </div>
 
       <div class="note">Remember your password? <a href="login.html">Sign in</a></div>
@@ -274,21 +275,47 @@
     document.querySelectorAll('.ferr').forEach(e => e.classList.remove('show'));
     document.querySelectorAll('.toast').forEach(t => { t.className = 'toast'; t.textContent = ''; });
   }
+ 
 
-  function updatePassword() {
-    clearAll();
-    const pwd  = document.getElementById('np1').value;
-    const pwd2 = document.getElementById('np2').value;
-    let ok = true;
-    if (pwd.length < 8) { setErr('np1', 'np1Err', 'Min 8 characters required.'); ok = false; }
-    if (pwd !== pwd2)   { setErr('np2', 'np2Err', "Passwords don't match."); ok = false; }
-    if (!ok) return;
+  
+
+function updatePassword() {
+  clearAll();
+
+  const pwd  = document.getElementById('np1').value;
+  const pwd2 = document.getElementById('np2').value;
+
+  let ok = true;
+  if (pwd.length < 8) { setErr('np1','np1Err'); ok = false; }
+  if (pwd !== pwd2) { setErr('np2','np2Err'); ok = false; }
+
+  if (!ok) return;
+
+  const params = new URLSearchParams(window.location.search);
+  const oobCode = params.get('oobCode');
+
+  if (!oobCode) {
+    alert("Invalid or expired link");
+    return;
+  }
+
+  confirmPasswordReset(auth, oobCode, pwd)
+    .then(() => {
+      document.getElementById('progressFill').style.width = '100%';
+      document.getElementById('sNum3').className = 'step-num done';
+      document.getElementById('sNum3').textContent = '✓';
+
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('pSuccess').classList.add('active');
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
+}
 
     // Get email from stored token
-    const raw = localStorage.getItem('dmResetToken');
-    if (!raw) { showExpired(); return; }
-    const { email, exp } = JSON.parse(raw);
-    if (Date.now() > exp) { showExpired(); return; }
+   
+    
 
     // Update password
     
@@ -297,13 +324,25 @@
     // Clear the token so this link can't be reused
 
     // Update progress and show success
-    document.getElementById('progressFill').style.width = '100%';
-    document.getElementById('sNum3').className = 'step-num done';
-    document.getElementById('sNum3').textContent = '✓';
+   
+  </script>
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, confirmPasswordReset } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.getElementById('pSuccess').classList.add('active');
-  }
+const firebaseConfig = {
+  apiKey: "AIzaSyAm2bx_zUwckVs9WSFZK99IEx9U93bMIMo",
+  authDomain: "testing-e7eea.firebaseapp.com",
+  projectId: "testing-e7eea",
+  storageBucket: "testing-e7eea.firebasestorage.app",
+  messagingSenderId: "203536013691",
+  appId: "1:203536013691:web:68865db00b734637a445de"
+};
+
+const app = initializeApp(firebaseConfig);
+
+window.auth = getAuth(app);
+window.confirmPasswordReset = confirmPasswordReset;
 </script>
 
 </body>
