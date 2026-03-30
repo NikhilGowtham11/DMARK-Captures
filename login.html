@@ -328,13 +328,6 @@
 </div>
 
 <script>
-  (function(){
-    const u=JSON.parse(localStorage.getItem('dmUsers')||'[]');
-    if(!u.find(x=>x.email==='admin@dmarkcaptures.com')){
-      u.push({name:'Admin',email:'admin@dmarkcaptures.com',pwd:'Admin@1234',role:'admin',createdAt:new Date().toISOString()});
-      localStorage.setItem('dmUsers',JSON.stringify(u));
-    }
-  })();
 
   let resetEmail='';
 
@@ -412,28 +405,41 @@
     });
   }
 
-  function sendReset(){
-    clearAll();
-    const email=document.getElementById('fEmail').value.trim();
-    if(!email||!/\S+@\S+\.\S+/.test(email)){setErr('fEmail','fEmailErr','Enter a valid email address.');return;}
-    const users=JSON.parse(localStorage.getItem('dmUsers')||'[]');
-    if(!users.find(u=>u.email===email)){setErr('fEmail','fEmailErr','No account found with this email.');return;}
-    resetEmail=email;
+  function sendReset() {
+  clearAll();
 
-    // Store reset token in localStorage so dmark-reset.html can pick it up
-    const token = btoa(email + '|' + Date.now());
-    localStorage.setItem('dmResetToken', JSON.stringify({email, token, exp: Date.now()+30*60*1000}));
+  const email = document.getElementById('fEmail').value.trim();
 
-    const btn=document.getElementById('fSendBtn');
-    btn.disabled=true;btn.textContent='Sending…';
-    setTimeout(()=>{
-      btn.disabled=false;btn.textContent='Send Password Reset Mail →';
-      document.getElementById('shownEmail').textContent=resetEmail;
-      document.getElementById('progressFill').style.width='100%';
+  if (!email || !/\S+@\S+\.\S+/.test(email)) {
+    setErr('fEmail','fEmailErr','Enter a valid email address.');
+    return;
+  }
+
+  const btn = document.getElementById('fSendBtn');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  sendPasswordResetEmail(auth, email)
+    .then(() => {
+      btn.disabled = false;
+      btn.textContent = 'Send Password Reset Mail →';
+
+      document.getElementById('shownEmail').textContent = email;
+      document.getElementById('progressFill').style.width = '100%';
       updateSteps(2);
       showPanel('pMailSent');
-    },1200);
-  }
+    })
+    .catch((error) => {
+      btn.disabled = false;
+      btn.textContent = 'Send Password Reset Mail →';
+
+      if (error.code === "auth/user-not-found") {
+        setErr('fEmail','fEmailErr','Email not registered ❌');
+      } else {
+        alert(error.message);
+      }
+    });
+}
 
   function resendMail(){
     setToast('tForgot_msg','📧 Reset email resent!','ok');
@@ -446,40 +452,80 @@
   }
 
   function doLogin(){
-    clearAll();
-    const email=document.getElementById('lEmail').value.trim();
-    const pwd=document.getElementById('lPwd').value;
-    let ok=true;
-    if(!email||!/\S+@\S+\.\S+/.test(email)){setErr('lEmail','lEmailErr');ok=false;}
-    if(!pwd){setErr('lPwd','lPwdErr');ok=false;}
-    if(!ok)return;
-    const users=JSON.parse(localStorage.getItem('dmUsers')||'[]');
-    const user=users.find(u=>u.email===email&&u.pwd===pwd);
-    if(!user){setErr('lEmail','lEmailErr','Invalid email or password.');return;}
-    sessionStorage.setItem('dmCurrentUser',JSON.stringify({name:user.name,email:user.email,role:user.role}));
-    setToast('tLogin_msg',user.role==='admin'?'✅ Welcome Admin! Going to dashboard…':'✅ Login successful! Redirecting…','ok');
-    setTimeout(()=>{window.location.href=user.role==='admin'?'dmark-admin.html':'dmark-captures.html';},1200);
-  }
+  clearAll();
 
-  function doReg(){
-    clearAll();
-    const name=document.getElementById('rName').value.trim();
-    const email=document.getElementById('rEmail').value.trim();
-    const pwd=document.getElementById('rPwd').value;
-    const pwd2=document.getElementById('rPwd2').value;
-    let ok=true;
-    if(!name){setErr('rName','rNameErr');ok=false;}
-    if(!email||!/\S+@\S+\.\S+/.test(email)){setErr('rEmail','rEmailErr');ok=false;}
-    if(pwd.length<8){setErr('rPwd','rPwdErr');ok=false;}
-    if(pwd!==pwd2){setErr('rPwd2','rPwd2Err');ok=false;}
-    if(!ok)return;
-    const users=JSON.parse(localStorage.getItem('dmUsers')||'[]');
-    if(users.find(u=>u.email===email)){setErr('rEmail','rEmailErr','Email already registered.');return;}
-    users.push({name,email,pwd,role:'user',createdAt:new Date().toISOString()});
-    localStorage.setItem('dmUsers',JSON.stringify(users));
-    setToast('tReg_msg','🎉 Account created! Please sign in.','ok');
-    setTimeout(()=>goTab('login'),1500);
-  }
+  const email = document.getElementById('lEmail').value.trim();
+  const pwd = document.getElementById('lPwd').value;
+
+  let ok = true;
+
+  if(!email || !/\S+@\S+\.\S+/.test(email)){setErr('lEmail','lEmailErr');ok=false;}
+  if(!pwd){setErr('lPwd','lPwdErr');ok=false;}
+
+  if(!ok) return;
+
+  signInWithEmailAndPassword(auth, email, pwd)
+    .then((userCredential) => {
+      setToast('tLogin_msg','✅ Login successful! Redirecting…','ok');
+      setTimeout(()=>{
+        window.location.href = "dmark-captures.html";
+      },1200);
+    })
+    .catch((error) => {
+      setErr('lEmail','lEmailErr','Invalid email or password');
+    });
+}
+
+ function doReg(){
+  clearAll();
+
+  const name = document.getElementById('rName').value.trim();
+  const email = document.getElementById('rEmail').value.trim();
+  const pwd = document.getElementById('rPwd').value;
+  const pwd2 = document.getElementById('rPwd2').value;
+
+  let ok = true;
+
+  if(!name){setErr('rName','rNameErr');ok=false;}
+  if(!email || !/\S+@\S+\.\S+/.test(email)){setErr('rEmail','rEmailErr');ok=false;}
+  if(pwd.length < 8){setErr('rPwd','rPwdErr');ok=false;}
+  if(pwd !== pwd2){setErr('rPwd2','rPwd2Err');ok=false;}
+
+  if(!ok) return;
+
+  createUserWithEmailAndPassword(auth, email, pwd)
+    .then((userCredential) => {
+      setToast('tReg_msg','🎉 Account created! Please sign in.','ok');
+      setTimeout(()=>goTab('login'),1500);
+    })
+    .catch((error) => {
+      if(error.code === "auth/email-already-in-use"){
+        setErr('rEmail','rEmailErr','Email already registered');
+      } else {
+        alert(error.message);
+      }
+    });
+}
+</script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, sendPasswordResetEmail, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAm2bx_zUwckVs9WSFZK99IEx9U93bMIMo",
+  authDomain: "testing-e7eea.firebaseapp.com",
+  projectId: "testing-e7eea",
+  appId: "1:203536013691:web:68865db00b734637a445de"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// make global
+window.auth = auth;
+window.sendPasswordResetEmail = sendPasswordResetEmail;
+window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+window.signInWithEmailAndPassword = signInWithEmailAndPassword;
 </script>
 </body>
 </html>
