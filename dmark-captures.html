@@ -1381,6 +1381,38 @@
     </div>
     <div class="detail-cta-wrap"><p class="detail-cta-label">Let us cover your next event!</p><button class="btn-gold" onclick="openBookingPopup('Functions & Events')">📅 Book Your Slot</button></div></div>
 </div>
+  <!-- BOOKING POPUP (from service details) -->
+<div class="booking-popup-overlay" id="bookingPopupOverlay">
+  <div class="booking-popup-box">
+    <h2 class="booking-popup-title">📸 Book Your Slot</h2>
+    <div class="booking-form-grid">
+      <div class="booking-form-group"><label>Full Name</label><input type="text" id="popup-name" placeholder="Your full name"></div>
+      <div class="booking-form-group"><label>Phone Number</label><input type="tel" id="popup-phone" placeholder="+91 XXXXX XXXXX"></div>
+      <div class="booking-form-group full"><label>Service</label>
+        <select id="popup-service">
+          <option value="">Select a service</option>
+          <option>Wedding Photography</option><option>Birthday Photography</option>
+          <option>School & College Fest</option><option>Reel Shoots</option>
+          <option>YouTube Shoots</option><option>Functions & Events</option>
+        </select>
+      </div>
+      <div class="booking-form-group"><label>Date</label><input type="date" id="popup-date"></div>
+      <div class="booking-form-group"><label>Time</label>
+        <div class="booking-time-row"><input type="number" id="popup-time" placeholder="Hour (1–12)" min="1" max="12"><select id="popup-ampm"><option value="AM">AM</option><option value="PM">PM</option></select></div>
+      </div>
+      <div class="booking-form-group"><label>Venue / Location</label><input type="text" id="popup-venue" placeholder="Venue name or address"></div>
+      <div class="booking-form-group full"><label>Indoor or Outdoor?</label>
+        <div class="booking-radio-group">
+          <label class="booking-radio-label"><input type="radio" name="popup-location-type" value="Indoor"> 🏠 Indoor</label>
+          <label class="booking-radio-label"><input type="radio" name="popup-location-type" value="Outdoor"> 🌳 Outdoor</label>
+          <label class="booking-radio-label"><input type="radio" name="popup-location-type" value="Both"> 🔀 Both</label>
+        </div>
+      </div>
+    </div>
+    <button class="booking-submit-btn" onclick="submitPopupBooking()">📅 Confirm Booking</button>
+    <button class="booking-close-btn" onclick="closeBookingPopup()">Cancel</button>
+  </div>
+</div>
 
 <!-- GALLERY -->
 <section id="gallery">
