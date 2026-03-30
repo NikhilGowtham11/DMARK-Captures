@@ -29,7 +29,6 @@
   .sb-link:hover{background:rgba(255,255,255,0.04);color:var(--text);}
   .sb-link.active{background:var(--purple-soft);color:var(--purple-light);border-right:3px solid var(--purple-light);}
   .sb-link .icon{font-size:1rem;width:20px;text-align:center;}
-  /* Notification badge on sidebar */
   .sb-badge{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:var(--danger);color:white;font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:10px;min-width:18px;text-align:center;}
   .sb-bottom{padding:1rem 1.4rem;border-top:1px solid var(--border);}
   .sb-user-row{display:flex;align-items:center;gap:10px;margin-bottom:0.8rem;}
@@ -65,6 +64,14 @@
   .box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.8rem;margin-bottom:1.5rem;}
   .box-title{font-size:0.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--purple-light);margin-bottom:1.2rem;}
 
+  /* ── UPLOAD TABS ── */
+  .upload-tabs{display:flex;gap:0;margin-bottom:1.4rem;border:1px solid var(--border);border-radius:10px;overflow:hidden;width:fit-content;}
+  .upload-tab{padding:9px 22px;font-size:0.85rem;font-weight:600;font-family:'DM Sans',sans-serif;background:none;border:none;color:var(--text-muted);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px;}
+  .upload-tab:hover{color:var(--text);background:rgba(255,255,255,0.04);}
+  .upload-tab.active{background:var(--purple-soft);color:var(--purple-light);}
+  .upload-tab-panel{display:none;}
+  .upload-tab-panel.active{display:block;}
+
   /* UPLOAD */
   .upload-zone{border:2px dashed rgba(107,33,168,0.4);border-radius:14px;padding:3rem 2rem;text-align:center;cursor:pointer;transition:border-color 0.2s,background 0.2s;}
   .upload-zone:hover,.upload-zone.dragover{border-color:var(--purple-light);background:rgba(107,33,168,0.07);}
@@ -77,6 +84,38 @@
   .progress-fill{height:100%;width:0%;background:linear-gradient(to right,var(--purple),var(--purple-light));border-radius:3px;transition:width 0.3s;}
   .progress-label{font-size:0.8rem;color:var(--text-muted);margin-top:6px;}
 
+  /* ── LINK INPUT PANEL ── */
+  .link-input-section{display:flex;flex-direction:column;gap:1rem;}
+  .link-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  .lfield{display:flex;flex-direction:column;gap:6px;}
+  .lfield.full{grid-column:span 2;}
+  .lfield label{font-size:0.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);}
+  .lfield input,.lfield select{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:white;font-size:0.9rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s;width:100%;}
+  .lfield input:focus,.lfield select:focus{border-color:var(--purple-light);}
+  .lfield select option{background:#1a1a1a;}
+  .link-preview-box{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:1rem;display:none;}
+  .link-preview-box.show{display:block;}
+  .link-preview-inner{display:flex;align-items:center;gap:12px;}
+  .link-preview-thumb{width:72px;height:54px;border-radius:6px;background:rgba(255,255,255,0.08);object-fit:cover;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
+  .link-preview-thumb img{width:100%;height:100%;object-fit:cover;border-radius:6px;}
+  .link-preview-info .lp-title{font-size:0.88rem;font-weight:600;color:var(--text);margin-bottom:2px;}
+  .link-preview-info .lp-url{font-size:0.75rem;color:var(--text-muted);word-break:break-all;}
+  .link-preview-info .lp-type{display:inline-block;margin-top:4px;padding:2px 8px;border-radius:10px;font-size:0.68rem;font-weight:700;}
+  .lp-type.image{background:rgba(34,197,94,0.15);color:#86efac;}
+  .lp-type.video{background:rgba(107,33,168,0.25);color:var(--purple-light);}
+  .lp-type.youtube{background:rgba(239,68,68,0.15);color:#fca5a5;}
+  .lp-type.drive{background:rgba(59,130,246,0.15);color:#93c5fd;}
+  .lp-type.other{background:rgba(255,255,255,0.08);color:var(--text-muted);}
+  .add-link-btn{padding:11px 24px;background:var(--purple);color:white;border:none;border-radius:8px;font-size:0.9rem;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background 0.2s;display:inline-flex;align-items:center;gap:6px;}
+  .add-link-btn:hover{background:var(--purple-light);}
+  .add-link-btn:disabled{opacity:0.4;cursor:not-allowed;}
+  .link-type-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:10px;font-size:0.68rem;font-weight:700;}
+  .link-type-badge.youtube{background:rgba(239,68,68,0.15);color:#fca5a5;}
+  .link-type-badge.drive{background:rgba(59,130,246,0.15);color:#93c5fd;}
+  .link-type-badge.image{background:rgba(34,197,94,0.15);color:#86efac;}
+  .link-type-badge.video{background:rgba(107,33,168,0.25);color:var(--purple-light);}
+  .link-type-badge.other{background:rgba(255,255,255,0.08);color:var(--text-muted);}
+
   /* ADMIN GALLERY GRID */
   .admin-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:0.75rem;margin-top:1rem;}
   .admin-thumb{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:3/4;background:rgba(255,255,255,0.04);border:1px solid var(--border);cursor:pointer;transition:transform 0.2s;}
@@ -86,9 +125,14 @@
   .admin-thumb:hover .th-del{opacity:1;}
   .admin-thumb .th-del:hover{background:var(--danger);}
   .admin-thumb .th-type{position:absolute;bottom:5px;left:5px;background:rgba(0,0,0,0.6);border-radius:4px;padding:2px 6px;font-size:0.65rem;color:white;}
+  .admin-thumb .th-link-icon{position:absolute;top:5px;left:5px;background:rgba(0,0,0,0.6);border-radius:4px;padding:2px 6px;font-size:0.65rem;color:white;}
+  .admin-thumb.link-thumb{background:rgba(255,255,255,0.03);}
+  .link-thumb-inner{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px;}
+  .link-thumb-inner .lt-icon{font-size:1.6rem;}
+  .link-thumb-inner .lt-name{font-size:0.62rem;color:var(--text-muted);text-align:center;word-break:break-all;line-height:1.3;max-height:32px;overflow:hidden;}
   .admin-empty{text-align:center;color:var(--text-muted);padding:2rem;font-size:0.9rem;}
 
-  /* ── BOOKINGS TABLE ── */
+  /* BOOKINGS TABLE */
   .booking-table-wrap{overflow-x:auto;}
   .booking-table{width:100%;border-collapse:collapse;}
   .booking-table th{font-size:0.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);padding:10px 12px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;}
@@ -149,12 +193,131 @@
   .quick-btn.secondary{background:rgba(255,255,255,0.07);color:var(--text);border:1px solid var(--border);}
   .quick-btn.secondary:hover{background:rgba(255,255,255,0.12);}
 
-  @media(max-width:768px){.sidebar{width:200px;}.main{margin-left:200px;padding:1.2rem 1.5rem;}.settings-grid{grid-template-columns:1fr;}.sfield.full{grid-column:span 1;}}
+  @media(max-width:768px){.sidebar{width:200px;}.main{margin-left:200px;padding:1.2rem 1.5rem;}.settings-grid{grid-template-columns:1fr;}.sfield.full{grid-column:span 1;}.link-row{grid-template-columns:1fr;}.lfield.full{grid-column:span 1;}}
   @media(max-width:600px){.sidebar{display:none;}.main{margin-left:0;}}
+
+  /* ══ LOGIN GATE ══ */
+  #loginGate{
+    position:fixed;inset:0;z-index:9999;
+    background:var(--bg);
+    display:flex;align-items:center;justify-content:center;
+    padding:1rem;
+  }
+  #loginGate.hidden{display:none;}
+  .login-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:2.5rem 2.2rem;
+    width:100%;max-width:400px;
+    position:relative;overflow:hidden;
+  }
+  .login-card::before{
+    content:'';position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse at 80% 0%,rgba(107,33,168,0.18),transparent 65%);
+  }
+  .login-logo{
+    font-family:'Playfair Display',serif;font-size:1.5rem;
+    font-weight:900;color:var(--purple-light);margin-bottom:2px;
+  }
+  .login-logo span{color:var(--text-muted);}
+  .login-tag{
+    font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;
+    color:var(--text-muted);margin-bottom:2rem;
+  }
+  .login-heading{
+    font-family:'Playfair Display',serif;font-size:1.4rem;
+    font-weight:800;color:white;margin-bottom:0.3rem;
+  }
+  .login-sub{font-size:0.83rem;color:var(--text-muted);margin-bottom:1.8rem;}
+  .login-field{display:flex;flex-direction:column;gap:6px;margin-bottom:1rem;}
+  .login-field label{
+    font-size:0.72rem;font-weight:700;letter-spacing:1.5px;
+    text-transform:uppercase;color:var(--text-muted);
+  }
+  .login-input-wrap{position:relative;}
+  .login-field input{
+    width:100%;background:rgba(255,255,255,0.06);
+    border:1px solid var(--border);border-radius:10px;
+    padding:12px 44px 12px 16px;color:white;
+    font-size:0.93rem;font-family:'DM Sans',sans-serif;
+    outline:none;transition:border-color 0.2s;
+  }
+  .login-field input:focus{border-color:var(--purple-light);}
+  .login-field input.error{border-color:var(--danger);}
+  .toggle-pwd{
+    position:absolute;right:14px;top:50%;transform:translateY(-50%);
+    background:none;border:none;color:var(--text-muted);
+    cursor:pointer;font-size:1rem;padding:0;transition:color 0.2s;
+  }
+  .toggle-pwd:hover{color:var(--text);}
+  .login-error{
+    background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);
+    border-radius:8px;padding:10px 14px;
+    color:#fca5a5;font-size:0.83rem;
+    margin-bottom:1rem;display:none;
+    animation:shake 0.4s ease;
+  }
+  .login-error.show{display:block;}
+  @keyframes shake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-6px);}40%,80%{transform:translateX(6px);}}
+  .login-attempts{font-size:0.75rem;color:rgba(239,68,68,0.7);margin-top:4px;display:none;}
+  .login-attempts.show{display:block;}
+  .login-btn{
+    width:100%;padding:13px;background:var(--purple);color:white;
+    border:none;border-radius:10px;font-size:0.95rem;font-weight:700;
+    font-family:'DM Sans',sans-serif;cursor:pointer;
+    transition:background 0.2s,transform 0.1s;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    margin-top:0.4rem;
+  }
+  .login-btn:hover{background:var(--purple-light);}
+  .login-btn:active{transform:scale(0.98);}
+  .login-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+  .login-divider{border:none;border-top:1px solid var(--border);margin:1.5rem 0;}
+  .login-hint{
+    background:rgba(107,33,168,0.1);border:1px solid rgba(107,33,168,0.2);
+    border-radius:8px;padding:10px 14px;font-size:0.78rem;
+    color:var(--text-muted);line-height:1.6;
+  }
+  .login-hint strong{color:var(--purple-light);}
+  .login-lockout{
+    text-align:center;padding:1rem;
+    background:rgba(239,68,68,0.08);
+    border:1px solid rgba(239,68,68,0.2);
+    border-radius:10px;margin-bottom:1rem;display:none;
+  }
+  .login-lockout.show{display:block;}
+  .lockout-timer{font-size:1.5rem;font-weight:700;color:#fca5a5;margin:4px 0;}
+  .lockout-msg{font-size:0.8rem;color:rgba(239,68,68,0.7);}
+
+  /* admin content hidden until logged in */
+  #adminContent{display:none;}
+  #adminContent.show{display:block;}
 </style>
 </head>
 <body>
 
+<!-- ══ LOGIN GATE ══ -->
+<div id="loginGate">
+  <div class="login-card">
+    <div style="position:relative;z-index:1;">
+      <div class="login-logo">Dmark<span>Captures</span></div>
+      <div class="login-tag">Admin Panel</div>
+      <div class="login-heading">Welcome back 👋</div>
+      <p class="login-sub">Sign in with your admin credentials to continue.</p>
+      <div class="login-lockout" id="lockoutBox"><div style="font-size:1.4rem;">🔒</div><div class="lockout-msg">Too many failed attempts. Try again in</div><div class="lockout-timer" id="lockoutTimer">—</div><div class="lockout-msg">seconds</div></div>
+      <div class="login-error" id="loginError">❌ Incorrect email or password.</div>
+      <div class="login-attempts" id="loginAttempts"></div>
+      <div class="login-field"><label>Email Address</label><div class="login-input-wrap"><input type="email" id="loginEmail" placeholder="your@gmail.com" onkeydown="if(event.key==='Enter')doLogin()"></div></div>
+      <div class="login-field"><label>Password</label><div class="login-input-wrap"><input type="password" id="loginPassword" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()"><button class="toggle-pwd" onclick="togglePwdVisibility()" title="Show/hide">👁</button></div></div>
+      <button class="login-btn" id="loginBtn" onclick="doLogin()">🔐 Sign In to Admin</button>
+      <hr class="login-divider">
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN CONTENT -->
+<div id="adminContent">
 <!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sb-brand">
@@ -173,7 +336,7 @@
     <button class="sb-link" onclick="showPanel('users',this)"><span class="icon">👥</span> Users</button>
     <button class="sb-link" onclick="showPanel('settings',this)"><span class="icon">⚙️</span> Settings</button>
     <div class="sb-section-label" style="margin-top:0.5rem">Site</div>
-    <a class="sb-link" href="login.html" target="_blank"><span class="icon">🌐</span> View Main Site</a>
+    <a class="sb-link" href="dmark-captures.html" target="_blank"><span class="icon">🌐</span> View Main Site</a>
   </nav>
   <div class="sb-bottom">
     <div class="sb-user-row">
@@ -191,11 +354,12 @@
   <div class="panel active" id="panel-dashboard">
     <div class="topbar">
       <div><div class="page-title">Dashboard</div><div class="page-subtitle">Welcome back! Here's your studio overview.</div></div>
-      <a href="login.html" target="_blank" class="view-site-btn">🌐 View Main Site</a>
+      <a href="dmark-captures.html" target="_blank" class="view-site-btn">🌐 View Main Site</a>
     </div>
     <div class="stats-row">
       <div class="stat-card"><div class="stat-icon">🖼️</div><div class="stat-num" id="statImages">0</div><div class="stat-label">Gallery Images</div></div>
       <div class="stat-card"><div class="stat-icon">🎬</div><div class="stat-num" id="statVideos">0</div><div class="stat-label">Gallery Videos</div></div>
+      <div class="stat-card"><div class="stat-icon">🔗</div><div class="stat-num" id="statLinks">0</div><div class="stat-label">Gallery Links</div></div>
       <div class="stat-card" id="statBookingsCard"><div class="stat-icon">📅</div><div class="stat-num" id="statBookings">0</div><div class="stat-label">Total Bookings</div></div>
       <div class="stat-card" id="statNewCard"><div class="stat-icon">🔔</div><div class="stat-num" id="statNew">0</div><div class="stat-label">New Bookings</div></div>
       <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-num" id="statUsers">0</div><div class="stat-label">Registered Users</div></div>
@@ -208,7 +372,6 @@
         <button class="quick-btn secondary" onclick="showPanel('users',document.querySelectorAll('.sb-link')[4])">👥 Manage Users</button>
       </div>
     </div>
-    <!-- Recent bookings preview -->
     <div class="box">
       <div class="box-title">Recent Bookings</div>
       <div id="dashRecentBookings"></div>
@@ -218,25 +381,90 @@
   <!-- GALLERY -->
   <div class="panel" id="panel-gallery">
     <div class="topbar">
-      <div><div class="page-title">Gallery Manager</div><div class="page-subtitle">Upload media — it appears instantly on the main site.</div></div>
+      <div><div class="page-title">Gallery Manager</div><div class="page-subtitle">Upload files or add links — they appear instantly on the main site.</div></div>
       <a href="dmark-captures.html#gallery" target="_blank" class="view-site-btn">🔗 See on Site</a>
     </div>
+
     <div class="box">
-      <div class="box-title">Upload New Media</div>
-      <div class="upload-zone" id="uploadZone"
-           onclick="document.getElementById('adminFileInput').click()"
-           ondragover="event.preventDefault();this.classList.add('dragover')"
-           ondragleave="this.classList.remove('dragover')"
-           ondrop="handleDrop(event)">
-        <div class="upload-zone-icon">📤</div>
-        <div class="upload-zone-text"><strong>Click to browse</strong> or drag & drop here<br>Supports: JPG, PNG, GIF, WEBP, MP4, MOV, WEBM</div>
+      <div class="box-title">Add New Media</div>
+
+      <!-- TABS -->
+      <div class="upload-tabs">
+        <button class="upload-tab active" id="tabUpload" onclick="switchUploadTab('upload')">
+          📤 Upload File
+        </button>
+        <button class="upload-tab" id="tabLink" onclick="switchUploadTab('link')">
+          🔗 Add Link
+        </button>
       </div>
-      <input type="file" id="adminFileInput" accept="image/*,video/*" multiple style="display:none" onchange="handleFileSelect(this.files)">
-      <div class="upload-progress" id="uploadProgress">
-        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-        <div class="progress-label" id="progressLabel">Uploading…</div>
+
+      <!-- FILE UPLOAD TAB -->
+      <div class="upload-tab-panel active" id="tabpanel-upload">
+        <div class="upload-zone" id="uploadZone"
+             onclick="document.getElementById('adminFileInput').click()"
+             ondragover="event.preventDefault();this.classList.add('dragover')"
+             ondragleave="this.classList.remove('dragover')"
+             ondrop="handleDrop(event)">
+          <div class="upload-zone-icon">📤</div>
+          <div class="upload-zone-text"><strong>Click to browse</strong> or drag & drop here<br>Supports: JPG, PNG, GIF, WEBP, MP4, MOV, WEBM</div>
+        </div>
+        <input type="file" id="adminFileInput" accept="image/*,video/*" multiple style="display:none" onchange="handleFileSelect(this.files)">
+        <div class="upload-progress" id="uploadProgress">
+          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+          <div class="progress-label" id="progressLabel">Uploading…</div>
+        </div>
+      </div>
+
+      <!-- LINK INPUT TAB -->
+      <div class="upload-tab-panel" id="tabpanel-link">
+        <div class="link-input-section">
+          <div class="link-row">
+            <div class="lfield full">
+              <label>Media URL / Link</label>
+              <input type="url" id="linkUrl" placeholder="https://youtube.com/watch?v=... or https://drive.google.com/... or direct image/video URL"
+                     oninput="previewLink(this.value)">
+            </div>
+          </div>
+          <div class="link-row">
+            <div class="lfield">
+              <label>Display Name</label>
+              <input type="text" id="linkName" placeholder="e.g. Wedding Highlight Reel">
+            </div>
+            <div class="lfield">
+              <label>Media Type</label>
+              <select id="linkType" onchange="updateLinkType()">
+                <option value="auto">🔍 Auto-detect</option>
+                <option value="image">🖼️ Image</option>
+                <option value="video">🎬 Video</option>
+                <option value="youtube">▶️ YouTube</option>
+                <option value="drive">📁 Google Drive</option>
+                <option value="other">🔗 Other Link</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Link Preview -->
+          <div class="link-preview-box" id="linkPreviewBox">
+            <div style="font-size:0.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Preview</div>
+            <div class="link-preview-inner">
+              <div class="link-preview-thumb" id="lpThumb">🔗</div>
+              <div class="link-preview-info">
+                <div class="lp-title" id="lpTitle">—</div>
+                <div class="lp-url" id="lpUrl">—</div>
+                <span class="lp-type" id="lpTypeBadge">link</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <button class="add-link-btn" id="addLinkBtn" onclick="addLinkToGallery()" disabled>
+              ➕ Add to Gallery
+            </button>
+          </div>
+        </div>
       </div>
     </div>
+
     <div class="box">
       <div class="box-title">Gallery <span id="galleryCountLabel" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted);font-size:0.78rem"></span></div>
       <div class="admin-gallery" id="adminGalleryGrid"></div>
@@ -352,6 +580,123 @@ function showNotif(title, detail){
   setTimeout(()=>t.classList.remove('show'),5000);
 }
 
+// ── UPLOAD TAB SWITCH ──
+function switchUploadTab(tab){
+  document.querySelectorAll('.upload-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.upload-tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
+  document.getElementById('tabpanel-'+tab).classList.add('active');
+}
+
+// ── DETECT LINK TYPE ──
+function detectLinkType(url){
+  if(!url) return 'other';
+  const u = url.toLowerCase();
+  if(u.includes('youtube.com') || u.includes('youtu.be')) return 'youtube';
+  if(u.includes('drive.google.com') || u.includes('docs.google.com')) return 'drive';
+  if(/\.(jpg|jpeg|png|gif|webp|svg|bmp)(\?|$)/.test(u)) return 'image';
+  if(/\.(mp4|mov|webm|avi|mkv)(\?|$)/.test(u)) return 'video';
+  return 'other';
+}
+
+function getLinkTypeIcon(type){
+  const icons = {youtube:'▶️', drive:'📁', image:'🖼️', video:'🎬', other:'🔗'};
+  return icons[type] || '🔗';
+}
+
+function getLinkTypeLabel(type){
+  const labels = {youtube:'YouTube', drive:'Google Drive', image:'Image', video:'Video', other:'Link'};
+  return labels[type] || 'Link';
+}
+
+// ── LINK PREVIEW ──
+function previewLink(url){
+  const box = document.getElementById('linkPreviewBox');
+  const btn = document.getElementById('addLinkBtn');
+  if(!url || !url.startsWith('http')){
+    box.classList.remove('show');
+    btn.disabled = true;
+    return;
+  }
+
+  const selType = document.getElementById('linkType').value;
+  const detectedType = selType === 'auto' ? detectLinkType(url) : selType;
+
+  const thumb = document.getElementById('lpThumb');
+  const title = document.getElementById('lpTitle');
+  const lpUrl = document.getElementById('lpUrl');
+  const badge = document.getElementById('lpTypeBadge');
+
+  // Try to show image thumbnail if image type
+  if(detectedType === 'image'){
+    thumb.innerHTML = `<img src="${url}" onerror="this.parentElement.textContent='🖼️'" alt="preview">`;
+  } else if(detectedType === 'youtube'){
+    // Extract YouTube thumbnail
+    const ytMatch = url.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    if(ytMatch){
+      thumb.innerHTML = `<img src="https://img.youtube.com/vi/${ytMatch[1]}/default.jpg" onerror="this.parentElement.textContent='▶️'" alt="yt">`;
+    } else {
+      thumb.textContent = '▶️';
+    }
+  } else {
+    thumb.textContent = getLinkTypeIcon(detectedType);
+  }
+
+  title.textContent = document.getElementById('linkName').value || getLinkTypeLabel(detectedType) + ' Link';
+  lpUrl.textContent = url.length > 60 ? url.substring(0,60)+'…' : url;
+  badge.textContent = getLinkTypeLabel(detectedType);
+  badge.className = 'lp-type ' + detectedType;
+
+  box.classList.add('show');
+  btn.disabled = false;
+}
+
+function updateLinkType(){
+  const url = document.getElementById('linkUrl').value;
+  if(url) previewLink(url);
+}
+
+// ── ADD LINK TO GALLERY ──
+function addLinkToGallery(){
+  const url  = document.getElementById('linkUrl').value.trim();
+  const name = document.getElementById('linkName').value.trim();
+  const selType = document.getElementById('linkType').value;
+  if(!url){ showToast('Please enter a valid URL.','err'); return; }
+
+  const detectedType = selType === 'auto' ? detectLinkType(url) : selType;
+  const items = getGalleryItems();
+
+  // For YouTube, store embed URL too
+  let embedUrl = null;
+  if(detectedType === 'youtube'){
+    const ytMatch = url.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    if(ytMatch) embedUrl = `https://www.youtube.com/embed/${ytMatch[1]}`;
+  }
+
+  items.push({
+    id: Date.now() + Math.random(),
+    name: name || (getLinkTypeLabel(detectedType) + ' — ' + new Date().toLocaleDateString()),
+    type: detectedType === 'image' ? 'image' : (detectedType === 'video' ? 'video' : detectedType),
+    src: url,
+    embedUrl: embedUrl,
+    isLink: true,
+    linkType: detectedType,
+    addedAt: new Date().toISOString()
+  });
+
+  saveGalleryItems(items);
+  renderAdminGallery();
+  updateStats();
+  showToast(`✅ Link added to gallery!`);
+
+  // Reset
+  document.getElementById('linkUrl').value = '';
+  document.getElementById('linkName').value = '';
+  document.getElementById('linkType').value = 'auto';
+  document.getElementById('linkPreviewBox').classList.remove('show');
+  document.getElementById('addLinkBtn').disabled = true;
+}
+
 // ── GALLERY ──
 function getGalleryItems(){ return JSON.parse(localStorage.getItem('dmGallery')||'[]'); }
 function saveGalleryItems(items){ localStorage.setItem('dmGallery',JSON.stringify(items)); }
@@ -367,7 +712,14 @@ function handleFileSelect(files){
     const reader=new FileReader();
     reader.onload=function(e){
       const items=getGalleryItems();
-      items.push({id:Date.now()+Math.random(),name:file.name,type:file.type.startsWith('video/')?'video':'image',src:e.target.result,addedAt:new Date().toISOString()});
+      items.push({
+        id:Date.now()+Math.random(),
+        name:file.name,
+        type:file.type.startsWith('video/')?'video':'image',
+        src:e.target.result,
+        isLink:false,
+        addedAt:new Date().toISOString()
+      });
       saveGalleryItems(items);
       done++;
       const pct=Math.round((done/total)*100);
@@ -375,7 +727,7 @@ function handleFileSelect(files){
       label.textContent=`Uploaded ${done} of ${total}…`;
       if(done===total){
         label.textContent=`✅ ${done} file(s) uploaded! They're now live on the main site.`;
-        setTimeout(()=>progress.classList.remove('show'),3000);
+        setTimeout(()=>{progress.classList.remove('show');fill.style.width='0%';},3000);
         renderAdminGallery(); updateStats();
         showToast(`✅ ${done} file(s) added — now visible on main site!`);
         document.getElementById('adminFileInput').value='';
@@ -396,13 +748,50 @@ function renderAdminGallery(){
   const label=document.getElementById('galleryCountLabel');
   const items=getGalleryItems();
   label.textContent=`— ${items.length} item(s)`;
-  if(!items.length){grid.innerHTML='<div class="admin-empty">No media yet. Upload some above! ☝️</div>';return;}
-  grid.innerHTML=items.map((item,idx)=>`
-    <div class="admin-thumb">
+  if(!items.length){grid.innerHTML='<div class="admin-empty">No media yet. Upload files or add links above! ☝️</div>';return;}
+
+  grid.innerHTML=items.map((item,idx)=>{
+    if(item.isLink){
+      const icon = getLinkTypeIcon(item.linkType||'other');
+      const typeLabel = getLinkTypeLabel(item.linkType||'other');
+      // For image links show the image directly
+      if(item.linkType === 'image'){
+        return `<div class="admin-thumb link-thumb">
+          <img src="${item.src}" alt="${item.name}" loading="lazy" onerror="this.style.display='none'">
+          <span class="th-link-icon">🔗</span>
+          <span class="th-type">${typeLabel}</span>
+          <button class="th-del" onclick="deleteGalleryItem(${idx})" title="Delete">✕</button>
+        </div>`;
+      }
+      // For YouTube show thumbnail
+      if(item.linkType === 'youtube'){
+        const ytMatch = item.src.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+        const thumbSrc = ytMatch ? `https://img.youtube.com/vi/${ytMatch[1]}/default.jpg` : '';
+        return `<div class="admin-thumb link-thumb">
+          ${thumbSrc ? `<img src="${thumbSrc}" alt="${item.name}" style="opacity:0.85">` : `<div class="link-thumb-inner"><div class="lt-icon">▶️</div><div class="lt-name">${item.name}</div></div>`}
+          <span class="th-link-icon">▶️</span>
+          <span class="th-type">YouTube</span>
+          <button class="th-del" onclick="deleteGalleryItem(${idx})" title="Delete">✕</button>
+        </div>`;
+      }
+      // Generic link
+      return `<div class="admin-thumb link-thumb">
+        <div class="link-thumb-inner">
+          <div class="lt-icon">${icon}</div>
+          <div class="lt-name">${item.name}</div>
+        </div>
+        <span class="th-link-icon">🔗</span>
+        <span class="th-type">${typeLabel}</span>
+        <button class="th-del" onclick="deleteGalleryItem(${idx})" title="Delete">✕</button>
+      </div>`;
+    }
+    // Normal file
+    return `<div class="admin-thumb">
       ${item.type==='image'?`<img src="${item.src}" alt="${item.name}" loading="lazy">`:`<video src="${item.src}" muted preload="metadata"></video>`}
       <span class="th-type">${item.type==='video'?'🎬':'🖼️'}</span>
       <button class="th-del" onclick="deleteGalleryItem(${idx})" title="Delete">✕</button>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function deleteGalleryItem(idx){
@@ -427,14 +816,12 @@ function updateBookingBadge(){
   if(count>0){
     badge.textContent=count; badge.style.display='block';
     card.classList.add('new-alert');
-    card.querySelector('.stat-icon').textContent='🔔';
     if(!card.querySelector('.stat-new-dot')){
       const dot=document.createElement('div'); dot.className='stat-new-dot'; card.appendChild(dot);
     }
   } else {
     badge.style.display='none';
     card.classList.remove('new-alert');
-    card.querySelector('.stat-icon').textContent='🔔';
     const dot=card.querySelector('.stat-new-dot'); if(dot) dot.remove();
   }
 }
@@ -532,8 +919,9 @@ function deleteUser(idx){
 // ── STATS ──
 function updateStats(){
   const items=getGalleryItems();
-  document.getElementById('statImages').textContent=items.filter(i=>i.type==='image').length;
-  document.getElementById('statVideos').textContent=items.filter(i=>i.type==='video').length;
+  document.getElementById('statImages').textContent=items.filter(i=>i.type==='image'&&!i.isLink).length;
+  document.getElementById('statVideos').textContent=items.filter(i=>i.type==='video'&&!i.isLink).length;
+  document.getElementById('statLinks').textContent=items.filter(i=>i.isLink).length;
   const users=JSON.parse(localStorage.getItem('dmUsers')||'[]');
   document.getElementById('statUsers').textContent=users.length;
   const bookings=getBookings();
@@ -568,9 +956,12 @@ function changeAdminPwd(){
 }
 
 // ── LOGOUT ──
-function logout(){ sessionStorage.removeItem('dmCurrentUser'); window.location.href='dmark-captures.html'; }
+function logout(){
+  sessionStorage.removeItem('dmAdminAuth');
+  showLoginGate();
+}
 
-// ── REAL-TIME: listen for new bookings from main site ──
+// ── REAL-TIME: listen for new bookings ──
 let lastBookingCount = getBookings().length;
 window.addEventListener('storage', function(e){
   if(e.key==='dmBookings'){
@@ -587,9 +978,204 @@ window.addEventListener('storage', function(e){
   }
 });
 
-// ── INIT ──
-updateStats();
-renderDashRecent();
+// ── INIT (called after login) ──
+function initAdmin(){
+  const auth = JSON.parse(sessionStorage.getItem('dmAdminAuth')||'null');
+  if(auth){
+    document.getElementById('sbName').textContent = auth.name||'Admin';
+    document.getElementById('sbAvatar').textContent = (auth.name||'A')[0].toUpperCase();
+  }
+  updateStats();
+  renderDashRecent();
+}
 </script>
+
+<!-- ══ LOGIN SYSTEM SCRIPT ══ -->
+<script>
+// ── DEFAULT ADMIN CREDENTIALS (stored in localStorage, changeable via Settings) ──
+function getAdminCreds(){
+  const stored = JSON.parse(localStorage.getItem('dmAdminCreds')||'null');
+  if(!stored){
+    // First-time defaults
+    const defaults = { email:'admin@dmarkcaptures.com', password:'Admin@1234', name:'Admin' };
+    localStorage.setItem('dmAdminCreds', JSON.stringify(defaults));
+    return defaults;
+  }
+  return stored;
+}
+
+// ── LOCKOUT SYSTEM ──
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_SECONDS = 30;
+let failedAttempts = parseInt(sessionStorage.getItem('dmLoginAttempts')||'0');
+let lockoutEnd = parseInt(sessionStorage.getItem('dmLockoutEnd')||'0');
+let lockoutInterval = null;
+
+function isLockedOut(){
+  return Date.now() < lockoutEnd;
+}
+
+function startLockoutTimer(){
+  const box = document.getElementById('lockoutBox');
+  const timerEl = document.getElementById('lockoutTimer');
+  const btn = document.getElementById('loginBtn');
+  box.classList.add('show');
+  btn.disabled = true;
+  lockoutInterval = setInterval(()=>{
+    const remaining = Math.ceil((lockoutEnd - Date.now())/1000);
+    if(remaining <= 0){
+      clearInterval(lockoutInterval);
+      box.classList.remove('show');
+      btn.disabled = false;
+      failedAttempts = 0;
+      sessionStorage.removeItem('dmLoginAttempts');
+      sessionStorage.removeItem('dmLockoutEnd');
+      document.getElementById('loginAttempts').classList.remove('show');
+    } else {
+      timerEl.textContent = remaining;
+    }
+  }, 500);
+}
+
+// ── SHOW / HIDE GATE ──
+function showLoginGate(){
+  document.getElementById('loginGate').classList.remove('hidden');
+  document.getElementById('adminContent').classList.remove('show');
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('loginError').classList.remove('show');
+  if(isLockedOut()) startLockoutTimer();
+}
+
+function showAdminPanel(adminData){
+  document.getElementById('loginGate').classList.add('hidden');
+  document.getElementById('adminContent').classList.add('show');
+  document.getElementById('sbName').textContent = adminData.name||'Admin';
+  document.getElementById('sbAvatar').textContent = (adminData.name||'A')[0].toUpperCase();
+  initAdmin();
+}
+
+// ── DO LOGIN ──
+function doLogin(){
+  if(isLockedOut()){ startLockoutTimer(); return; }
+
+  const emailInput = document.getElementById('loginEmail');
+  const pwdInput   = document.getElementById('loginPassword');
+  const errorBox   = document.getElementById('loginError');
+  const attemptsEl = document.getElementById('loginAttempts');
+  const btn        = document.getElementById('loginBtn');
+
+  const email    = emailInput.value.trim();
+  const password = pwdInput.value;
+
+  // Basic validation
+  if(!email || !password){
+    errorBox.textContent = '⚠️ Please enter both email and password.';
+    errorBox.classList.add('show');
+    emailInput.classList.toggle('error', !email);
+    pwdInput.classList.toggle('error', !password);
+    return;
+  }
+
+  emailInput.classList.remove('error');
+  pwdInput.classList.remove('error');
+
+  // Loading state
+  btn.disabled = true;
+  btn.textContent = '⏳ Signing in…';
+
+  setTimeout(()=>{
+    const creds = getAdminCreds();
+
+    if(email === creds.email && password === creds.password){
+      // ✅ SUCCESS
+      failedAttempts = 0;
+      sessionStorage.removeItem('dmLoginAttempts');
+      sessionStorage.removeItem('dmLockoutEnd');
+      errorBox.classList.remove('show');
+      attemptsEl.classList.remove('show');
+
+      const authData = { email: creds.email, name: creds.name, loginTime: Date.now() };
+      sessionStorage.setItem('dmAdminAuth', JSON.stringify(authData));
+
+      btn.textContent = '✅ Logged in!';
+      btn.style.background = 'var(--success)';
+      setTimeout(()=>{
+        showAdminPanel(authData);
+        btn.disabled = false;
+        btn.textContent = '🔐 Sign In to Admin';
+        btn.style.background = '';
+      }, 600);
+
+    } else {
+      // ❌ FAIL
+      failedAttempts++;
+      sessionStorage.setItem('dmLoginAttempts', failedAttempts);
+
+      const remaining = MAX_ATTEMPTS - failedAttempts;
+      errorBox.textContent = '❌ Incorrect email or password.';
+      errorBox.classList.add('show');
+      emailInput.classList.add('error');
+      pwdInput.classList.add('error');
+      pwdInput.value = '';
+
+      if(failedAttempts >= MAX_ATTEMPTS){
+        lockoutEnd = Date.now() + LOCKOUT_SECONDS * 1000;
+        sessionStorage.setItem('dmLockoutEnd', lockoutEnd);
+        attemptsEl.classList.remove('show');
+        startLockoutTimer();
+      } else {
+        attemptsEl.textContent = `⚠️ ${remaining} attempt${remaining===1?'':'s'} remaining before lockout.`;
+        attemptsEl.classList.add('show');
+      }
+
+      btn.disabled = false;
+      btn.textContent = '🔐 Sign In to Admin';
+    }
+  }, 700);
+}
+
+// ── TOGGLE PASSWORD VISIBILITY ──
+function togglePwdVisibility(){
+  const input = document.getElementById('loginPassword');
+  const btn   = document.querySelector('.toggle-pwd');
+  if(input.type === 'password'){
+    input.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁';
+  }
+}
+
+// ── AUTO-LOGIN if session still active ──
+(function(){
+  const auth = JSON.parse(sessionStorage.getItem('dmAdminAuth')||'null');
+  // Session expires after 8 hours
+  if(auth && (Date.now() - auth.loginTime) < 8 * 60 * 60 * 1000){
+    showAdminPanel(auth);
+  } else {
+    sessionStorage.removeItem('dmAdminAuth');
+    showLoginGate();
+    if(isLockedOut()) startLockoutTimer();
+  }
+})();
+
+// ── PATCH: update password from settings panel ──
+const _origChangePwd = window.changeAdminPwd;
+window.changeAdminPwd = function(){
+  const cur = document.getElementById('curPwd').value;
+  const nw  = document.getElementById('newPwd').value;
+  const creds = getAdminCreds();
+  if(cur !== creds.password){ showToast('❌ Current password is wrong.','err'); return; }
+  if(nw.length < 8){ showToast('❌ New password too short (min 8 chars).','err'); return; }
+  creds.password = nw;
+  localStorage.setItem('dmAdminCreds', JSON.stringify(creds));
+  document.getElementById('curPwd').value = '';
+  document.getElementById('newPwd').value = '';
+  showToast('🔑 Password updated! Use new password next time.');
+};
+</script>
+</div><!-- end adminContent -->
 </body>
 </html>
