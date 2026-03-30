@@ -227,20 +227,8 @@
 
 <script>
   // Check if valid reset token exists
-  window.addEventListener('DOMContentLoaded', () => {
-    const raw = localStorage.getItem('dmResetToken');
-    if (!raw) {
-      showExpired(); return;
-    }
-    try {
-      const { email, exp } = JSON.parse(raw);
-      if (!email || Date.now() > exp) {
-        showExpired(); return;
-      }
-    } catch(e) {
-      showExpired();
-    }
-  });
+  
+  
 
   function showExpired() {
     document.getElementById('tokenWarn').style.display = 'flex';
@@ -303,15 +291,10 @@
     if (Date.now() > exp) { showExpired(); return; }
 
     // Update password
-    const users = JSON.parse(localStorage.getItem('dmUsers') || '[]');
-    const idx = users.findIndex(u => u.email === email);
-    if (idx !== -1) {
-      users[idx].pwd = pwd;
-      localStorage.setItem('dmUsers', JSON.stringify(users));
-    }
+    
+    
 
     // Clear the token so this link can't be reused
-    localStorage.removeItem('dmResetToken');
 
     // Update progress and show success
     document.getElementById('progressFill').style.width = '100%';
@@ -322,5 +305,6 @@
     document.getElementById('pSuccess').classList.add('active');
   }
 </script>
+
 </body>
 </html>
