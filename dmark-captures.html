@@ -23,7 +23,6 @@
   body { font-family:'DM Sans',sans-serif; background:var(--white); color:var(--black); }
 
   /* ═══ CLICK FLASH OVERLAY ═══ */
-  /* BUG FIX: renamed .flash → .flashing to avoid collision with .flash camera CSS class */
   #clickFlash {
     position: fixed;
     inset: 0;
@@ -242,7 +241,6 @@
     background:radial-gradient(ellipse at center,rgba(130,129,129,1) 0%,rgba(64,62,63,1) 100%);
     border:3px solid #312F2F; border-radius:4px; box-shadow:inset 0 8px 8px -8px #FDFDFD;
   }
-  /* BUG FIX: renamed .flash → .cam-flash to avoid collision with #clickFlash.flashing */
   .cam-flash {
     position:absolute; top:-6px; right:20px; width:58px; height:46px;
     background:radial-gradient(ellipse at center,rgba(130,129,129,1) 0%,rgba(64,62,63,1) 100%);
@@ -839,8 +837,6 @@
     .ma-fields { grid-template-columns:1fr; }
     .ma-field.ma-full { grid-column:span 1; }
   }
-
-  
 </style>
 </head>
 <body>
@@ -881,7 +877,6 @@
   <div class="hero-bg"></div>
   <div class="camera-bg">
     <div class="container">
-      <!-- BUG FIX: .flash renamed to .cam-flash throughout to avoid CSS class collision -->
       <div class="camera-top">
         <div class="zoom"></div><div class="mode-changer"></div><div class="sides"></div>
         <div class="range-finder"></div><div class="focus"></div><div class="red"></div>
@@ -1394,8 +1389,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-
-// BUG FIX: expose auth on window immediately so non-module scripts can access it
 window.firebaseAuth = auth;
 
 onAuthStateChanged(auth, (user) => {
@@ -1416,7 +1409,6 @@ window.handleLogout = function() {
   signOut(auth).then(() => { window.location.reload(); });
 };
 
-// BUG FIX: safe auth check — if Firebase hasn't resolved yet, redirect to login
 window.checkAuthAndBook = function(callback) {
   const user = auth.currentUser;
   if (!user) {
@@ -1430,8 +1422,7 @@ window.checkAuthAndBook = function(callback) {
 
 <script>
 // ════════════════════════════════════
-// CLICK FLASH — camera shutter effect
-// BUG FIX: use class 'flashing' (not 'flash') to avoid collision with .cam-flash CSS
+// CLICK FLASH
 // ════════════════════════════════════
 function triggerFlash(callback) {
   const flash = document.getElementById('clickFlash');
@@ -1471,8 +1462,7 @@ document.addEventListener('click', function(e) {
 });
 
 // ════════════════════════════════════
-// GALLERY DATA — Add media via URL here
-// Format: { src: 'URL', type: 'image'|'video', name: 'Caption' }
+// GALLERY DATA
 // ════════════════════════════════════
 const GALLERY_URL_MEDIA = [
   { src: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800', type: 'image', name: 'Wedding Ceremony' },
@@ -1550,10 +1540,10 @@ function renderCoverflow() {
   updateCoverflow();
   startCfAuto();
 
-  // BUG FIX: pause auto on hover
+  // Pause auto-scroll when user hovers over gallery
   const wrapper = document.getElementById('cfWrapper');
-  wrapper.addEventListener('mouseenter', () => { cfIsPaused = true; });
-  wrapper.addEventListener('mouseleave', () => { cfIsPaused = false; });
+  wrapper.onmouseenter = () => { cfIsPaused = true; };
+  wrapper.onmouseleave = () => { cfIsPaused = false; };
 }
 
 function updateCoverflow() {
@@ -1562,6 +1552,8 @@ function updateCoverflow() {
   cfIndex = ((cfIndex % items.length) + items.length) % items.length;
 
   const cards = document.querySelectorAll('.cf-card');
+  const wrapper = document.getElementById('cfWrapper');
+
   cards.forEach((card, i) => {
     card.classList.remove('active', 'left-1', 'left-2', 'right-1', 'right-2');
     const diff = i - cfIndex;
@@ -1571,8 +1563,17 @@ function updateCoverflow() {
     else if (diff === 1) card.classList.add('right-1');
     else if (diff >= 2) card.classList.add('right-2');
 
+    // ════════════════════════════════════════════════════════════
+    // BUG FIX: replaced card.scrollIntoView() with manual scroll
+    // on the WRAPPER element only — this prevents the entire PAGE
+    // from jumping/scrolling to the gallery section automatically.
+    // ════════════════════════════════════════════════════════════
     if (diff === 0) {
-      card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      const cardLeft = card.offsetLeft;
+      const cardWidth = card.offsetWidth;
+      const wrapperWidth = wrapper.offsetWidth;
+      const targetScroll = cardLeft - (wrapperWidth / 2) + (cardWidth / 2);
+      wrapper.scrollTo({ left: targetScroll, behavior: 'smooth' });
     }
   });
 
@@ -1636,7 +1637,6 @@ cfTrack.addEventListener('touchend', e => {
 
 // ════════════════════════════════════
 // GALLERY LIGHTBOX
-// BUG FIX: guard against empty items array
 // ════════════════════════════════════
 let lbIndex = 0;
 
@@ -1704,11 +1704,8 @@ function closeService() {
 
 // ════════════════════════════════════
 // BOOKING
-// BUG FIX: openBookingPopup used a closure that ran before auth was ready;
-//           now uses the safe window.checkAuthAndBook wrapper
 // ════════════════════════════════════
 function openBookingPopup(service) {
-  // If Firebase auth isn't ready yet, checkAuthAndBook safely redirects
   if (typeof window.checkAuthAndBook !== 'function') {
     window.location.href = 'login.html';
     return;
@@ -1731,7 +1728,6 @@ function closeBookingPopup() {
   document.getElementById('bookingPopupOverlay').classList.remove('show');
 }
 
-// BUG FIX: guarded firebaseAuth access with optional chaining
 function saveBookingToStorage(data) {
   const user = window.firebaseAuth?.currentUser;
   if (user) data.userEmail = user.email;
@@ -1771,7 +1767,6 @@ function submitPopupBooking() {
   closeBookingPopup();
   document.getElementById('bookingPopup').classList.add('show');
 
-  // Reset form
   ['popup-name','popup-phone','popup-date','popup-time','popup-venue'].forEach(id => {
     document.getElementById(id).value = '';
   });
@@ -1821,7 +1816,6 @@ function closePopup() {
 
 // ════════════════════════════════════
 // MY ACCOUNT
-// BUG FIX: guarded all firebaseAuth accesses with optional chaining
 // ════════════════════════════════════
 function viewMyAccount() {
   document.getElementById('userDropdown').classList.remove('show');
@@ -1887,12 +1881,10 @@ function viewMyBookings() {
 // ════════════════════════════════════
 renderCoverflow();
 
-// Re-render if gallery items change (admin panel support)
 window.addEventListener('storage', function(e) {
   if (e.key === 'dmGallery') renderCoverflow();
 });
 
-// BUG FIX: correct selector — use #aboutCameraScene (id added to element) for IntersectionObserver
 const aboutCameraEl = document.getElementById('aboutCameraScene');
 if (aboutCameraEl) {
   const obs = new IntersectionObserver((entries) => {
